@@ -21,8 +21,6 @@
             --border-color: #2a3a4a;
             --shadow: 0 20px 60px rgba(0,0,0,0.7);
             --radius: 28px;
-            --radius-sm: 16px;
-            --radius-xs: 10px;
             --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         html, body { height: 100%; overflow: hidden; }
@@ -39,7 +37,7 @@
             width: 100vw;
         }
 
-        /* ===== APP CONTAINER ===== */
+        /* ===== APP ===== */
         .app {
             width: 100%;
             max-width: 480px;
@@ -54,7 +52,7 @@
             position: relative;
         }
 
-        /* ===== AUTH SCREEN ===== */
+        /* ===== AUTH ===== */
         .auth-screen {
             display: flex;
             flex-direction: column;
@@ -89,7 +87,6 @@
             color: var(--text-secondary);
             font-size: 0.95rem;
             margin-top: -6px;
-            font-weight: 400;
         }
         .auth-screen input {
             width: 100%;
@@ -107,9 +104,6 @@
             border-color: var(--text-accent);
             box-shadow: 0 0 0 3px rgba(111, 170, 255, 0.15);
         }
-        .auth-screen input::placeholder {
-            color: #5a6a7a;
-        }
         .auth-screen button {
             width: 100%;
             padding: 16px;
@@ -126,9 +120,6 @@
         .auth-screen button:hover {
             transform: scale(1.02);
             background: #8abaff;
-        }
-        .auth-screen button:active {
-            transform: scale(0.97);
         }
         .auth-screen .toggle-auth {
             color: var(--text-secondary);
@@ -207,7 +198,6 @@
             height: 8px;
             background: #6fcf97;
             border-radius: 50%;
-            margin-right: 2px;
         }
         .chat-header .actions {
             display: flex;
@@ -225,11 +215,102 @@
             color: var(--text-accent);
             background: rgba(111, 170, 255, 0.08);
         }
-        .chat-header .actions i:active {
-            transform: scale(0.9);
+
+        /* ===== CHAT LIST ===== */
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 12px;
+            background: var(--bg-primary);
+        }
+        .chat-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .chat-list::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 10px;
         }
 
-        /* MESSAGES */
+        .chat-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 14px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 4px;
+            background: var(--bg-secondary);
+            border: 1px solid transparent;
+        }
+        .chat-item:hover {
+            background: var(--bg-card);
+            border-color: var(--border-color);
+        }
+        .chat-item.active {
+            background: var(--bg-card);
+            border-color: var(--text-accent);
+        }
+        .chat-item .chat-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            color: #fff;
+        }
+        .chat-item .chat-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .chat-item .chat-info .chat-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .chat-item .chat-info .chat-last {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .chat-item .chat-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .chat-item .chat-meta .time {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+        }
+        .chat-item .chat-meta .unread {
+            background: var(--text-accent);
+            color: var(--bg-primary);
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 30px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        /* ===== MESSAGES ===== */
+        .messages-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-primary);
+            display: none;
+        }
+        .messages-wrap.active {
+            display: flex;
+        }
         .messages {
             flex: 1;
             padding: 16px 14px 8px;
@@ -237,14 +318,10 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
-            background: var(--bg-primary);
             scroll-behavior: smooth;
         }
         .messages::-webkit-scrollbar {
             width: 4px;
-        }
-        .messages::-webkit-scrollbar-track {
-            background: transparent;
         }
         .messages::-webkit-scrollbar-thumb {
             background: var(--border-color);
@@ -259,7 +336,6 @@
             line-height: 1.45;
             word-break: break-word;
             animation: fadeIn 0.25s ease;
-            position: relative;
         }
         .msg.self {
             align-self: flex-end;
@@ -278,7 +354,6 @@
             display: block;
             margin-top: 4px;
             text-align: right;
-            letter-spacing: 0.3px;
         }
         .msg .voice {
             display: flex;
@@ -297,26 +372,6 @@
             border-radius: 14px;
             margin-top: 4px;
             border: 1px solid var(--border-color);
-        }
-        .msg .call-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.85rem;
-        }
-        .msg .call-info i {
-            font-size: 1.2rem;
-        }
-        .msg.system {
-            text-align: center;
-            align-self: center;
-            background: transparent;
-            font-size: 0.7rem;
-            color: #4a5a6a;
-            max-width: 90%;
-            padding: 6px 12px;
-            border-radius: 20px;
-            background: rgba(255,255,255,0.03);
         }
         .msg .file-link {
             display: inline-flex;
@@ -348,7 +403,7 @@
 
         /* ===== INPUT AREA ===== */
         .input-area {
-            display: flex;
+            display: none;
             gap: 6px;
             padding: 8px 12px 14px;
             background: var(--bg-secondary);
@@ -356,6 +411,9 @@
             align-items: center;
             flex-wrap: wrap;
             flex-shrink: 0;
+        }
+        .input-area.active {
+            display: flex;
         }
         .input-area input {
             flex: 1;
@@ -373,9 +431,6 @@
             border-color: var(--text-accent);
             box-shadow: 0 0 0 3px rgba(111, 170, 255, 0.08);
         }
-        .input-area input::placeholder {
-            color: #4a5a6a;
-        }
         .input-area .btn-icon {
             background: transparent;
             border: none;
@@ -385,18 +440,15 @@
             padding: 8px;
             border-radius: 50%;
             transition: var(--transition);
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 44px;
-            height: 44px;
         }
         .input-area .btn-icon:hover {
             color: var(--text-accent);
             background: rgba(111, 170, 255, 0.06);
-        }
-        .input-area .btn-icon:active {
-            transform: scale(0.9);
         }
         .input-area .btn-send {
             background: var(--text-accent);
@@ -416,9 +468,6 @@
         .input-area .btn-send:hover {
             transform: scale(1.02);
             background: #8abaff;
-        }
-        .input-area .btn-send:active {
-            transform: scale(0.97);
         }
         .recording-indicator {
             display: none;
@@ -454,7 +503,6 @@
             bottom: 0;
             background: rgba(0,0,0,0.92);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             z-index: 999;
             justify-content: center;
             align-items: center;
@@ -524,9 +572,6 @@
         .call-modal .call-actions button:hover {
             transform: scale(1.05);
         }
-        .call-modal .call-actions button:active {
-            transform: scale(0.92);
-        }
         .call-modal .call-actions .hangup {
             background: #ff3b3b;
             color: #fff;
@@ -539,230 +584,59 @@
             color: #fff;
             border: 1px solid var(--border-color);
         }
-        .call-modal .call-actions .mute:hover {
-            background: #2a3a4a;
-        }
         .call-modal .call-actions .mute.muted {
             background: #ff3b3b;
             border-color: #ff3b3b;
         }
 
         /* ===== RESPONSIVE ===== */
-        /* Телефоны (до 480px) */
         @media (max-width: 480px) {
-            .app {
-                max-width: 100%;
-                max-height: 100vh;
-                border-radius: 0;
-                height: 100vh;
-            }
-            .auth-screen {
-                padding: 24px 20px;
-            }
-            .auth-screen h1 {
-                font-size: 2rem;
-            }
-            .chat-header {
-                padding: 10px 12px;
-                min-height: 56px;
-            }
-            .chat-header .user .avatar {
-                width: 38px;
-                height: 38px;
-                font-size: 1rem;
-            }
-            .chat-header .user .info .name {
-                font-size: 0.95rem;
-            }
-            .chat-header .actions {
-                gap: 6px;
-            }
-            .chat-header .actions i {
-                font-size: 1.1rem;
-                padding: 4px;
-            }
-            .messages {
-                padding: 12px 10px 4px;
-            }
-            .msg {
-                max-width: 88%;
-                font-size: 0.88rem;
-                padding: 8px 14px;
-            }
-            .msg .voice audio {
-                max-width: 130px;
-                height: 28px;
-            }
-            .msg .video-preview {
-                max-width: 140px;
-            }
-            .input-area {
-                padding: 6px 10px 12px;
-                gap: 4px;
-            }
-            .input-area input {
-                font-size: 0.88rem;
-                padding: 10px 14px;
-            }
-            .input-area .btn-icon {
-                width: 38px;
-                height: 38px;
-                font-size: 1.1rem;
-                padding: 4px;
-            }
-            .input-area .btn-send {
-                padding: 10px 16px;
-                font-size: 0.85rem;
-            }
-            .call-modal video {
-                width: 92%;
-            }
-            .call-modal .local-video-wrap {
-                width: 70px;
-                height: 100px;
-                bottom: 100px;
-                right: 12px;
-            }
-            .call-modal .call-actions button {
-                width: 56px;
-                height: 56px;
-                font-size: 1.3rem;
-            }
-            .call-modal .caller-name {
-                font-size: 1.2rem;
-            }
+            .app { max-width: 100%; max-height: 100vh; border-radius: 0; height: 100vh; }
+            .auth-screen { padding: 24px 20px; }
+            .auth-screen h1 { font-size: 2rem; }
+            .chat-header { padding: 10px 12px; min-height: 56px; }
+            .chat-header .user .avatar { width: 38px; height: 38px; font-size: 1rem; }
+            .chat-header .actions { gap: 6px; }
+            .chat-header .actions i { font-size: 1.1rem; padding: 4px; }
+            .chat-item { padding: 10px 12px; }
+            .chat-item .chat-avatar { width: 40px; height: 40px; font-size: 1rem; }
+            .msg { max-width: 88%; font-size: 0.88rem; padding: 8px 14px; }
+            .msg .voice audio { max-width: 130px; height: 28px; }
+            .input-area { padding: 6px 10px 12px; }
+            .input-area input { font-size: 0.88rem; padding: 10px 14px; }
+            .input-area .btn-icon { width: 38px; height: 38px; font-size: 1.1rem; }
+            .input-area .btn-send { padding: 10px 16px; font-size: 0.85rem; }
+            .call-modal video { width: 92%; }
+            .call-modal .local-video-wrap { width: 70px; height: 100px; bottom: 100px; right: 12px; }
+            .call-modal .call-actions button { width: 56px; height: 56px; font-size: 1.3rem; }
         }
-
-        /* Планшеты (481-768px) */
         @media (min-width: 481px) and (max-width: 768px) {
-            .app {
-                max-width: 520px;
-                max-height: 95vh;
-                border-radius: var(--radius);
-            }
-            .msg {
-                max-width: 75%;
-            }
-            .call-modal video {
-                max-width: 480px;
-            }
+            .app { max-width: 520px; max-height: 95vh; border-radius: var(--radius); }
+            .msg { max-width: 75%; }
         }
-
-        /* Десктопы (769px+) */
         @media (min-width: 769px) {
-            .app {
-                max-width: 480px;
-                max-height: 900px;
-                border-radius: var(--radius);
-                height: 92vh;
-            }
-            body {
-                padding: 20px;
-                background: #05080c;
-            }
-            .msg {
-                max-width: 70%;
-            }
-            .chat-header .actions i {
-                padding: 8px;
-            }
-            .call-modal video {
-                max-width: 500px;
-            }
+            .app { max-width: 480px; max-height: 900px; border-radius: var(--radius); height: 92vh; }
+            body { padding: 20px; background: #05080c; }
+            .msg { max-width: 70%; }
         }
-
-        /* Альбомная ориентация на телефонах */
         @media (max-height: 500px) and (orientation: landscape) {
-            .app {
-                max-height: 100vh;
-                border-radius: 0;
-            }
-            .chat-header {
-                min-height: 44px;
-                padding: 6px 12px;
-            }
-            .chat-header .user .avatar {
-                width: 30px;
-                height: 30px;
-                font-size: 0.8rem;
-            }
-            .chat-header .user .info .name {
-                font-size: 0.85rem;
-            }
-            .chat-header .actions i {
-                font-size: 1rem;
-            }
-            .messages {
-                padding: 8px 10px 4px;
-            }
-            .msg {
-                padding: 6px 12px;
-                font-size: 0.82rem;
-                max-width: 75%;
-            }
-            .input-area {
-                padding: 4px 8px 8px;
-            }
-            .input-area input {
-                padding: 6px 12px;
-                font-size: 0.82rem;
-            }
-            .input-area .btn-icon {
-                width: 32px;
-                height: 32px;
-                font-size: 0.9rem;
-            }
-            .input-area .btn-send {
-                padding: 6px 14px;
-                font-size: 0.8rem;
-            }
-            .auth-screen {
-                padding: 16px;
-                gap: 8px;
-            }
-            .auth-screen h1 {
-                font-size: 1.6rem;
-            }
-            .auth-screen input {
-                padding: 10px 16px;
-                font-size: 0.9rem;
-            }
-            .auth-screen button {
-                padding: 10px;
-                font-size: 0.9rem;
-            }
-            .call-modal .local-video-wrap {
-                width: 50px;
-                height: 70px;
-                bottom: 80px;
-                right: 10px;
-            }
-            .call-modal .call-actions button {
-                width: 44px;
-                height: 44px;
-                font-size: 1rem;
-            }
+            .app { max-height: 100vh; border-radius: 0; }
+            .chat-header { min-height: 44px; padding: 6px 12px; }
+            .chat-header .user .avatar { width: 30px; height: 30px; font-size: 0.8rem; }
+            .chat-item .chat-avatar { width: 32px; height: 32px; font-size: 0.8rem; }
+            .msg { padding: 6px 12px; font-size: 0.82rem; max-width: 75%; }
+            .input-area { padding: 4px 8px 8px; }
+            .input-area input { padding: 6px 12px; font-size: 0.82rem; }
+            .input-area .btn-icon { width: 32px; height: 32px; font-size: 0.9rem; }
+            .input-area .btn-send { padding: 6px 14px; font-size: 0.8rem; }
+            .auth-screen { padding: 16px; gap: 8px; }
+            .auth-screen h1 { font-size: 1.6rem; }
+            .auth-screen input { padding: 10px 16px; font-size: 0.9rem; }
+            .auth-screen button { padding: 10px; font-size: 0.9rem; }
+            .call-modal .local-video-wrap { width: 50px; height: 70px; bottom: 80px; right: 10px; }
+            .call-modal .call-actions button { width: 44px; height: 44px; font-size: 1rem; }
         }
 
-        /* Тёмная тема для скролла */
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--border-color);
-            border-radius: 10px;
-        }
-
-        /* Отключение выделения */
-        .no-select {
-            user-select: none;
-            -webkit-user-select: none;
-        }
-
-        /* Анимация появления чата */
         .chat-screen.active {
             display: flex;
             animation: slideUp 0.35s ease;
@@ -770,6 +644,41 @@
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-create-group {
+            background: var(--text-accent);
+            border: none;
+            border-radius: 50px;
+            padding: 8px 16px;
+            color: var(--bg-primary);
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-create-group:hover {
+            background: #8abaff;
+            transform: scale(1.02);
+        }
+        .back-to-list {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+        .back-to-list:hover {
+            color: var(--text-accent);
+        }
+        @media (max-width: 480px) {
+            .back-to-list { display: block; }
         }
     </style>
 </head>
@@ -781,8 +690,8 @@
         <div class="logo-wrap"><i class="fas fa-shield-halved"></i></div>
         <h1>ClanChat</h1>
         <div class="sub">для своих</div>
-        <input type="text" id="loginInput" placeholder="Твой ник" value="Аргум" autocomplete="username">
-        <input type="password" id="passInput" placeholder="Пароль" value="123" autocomplete="current-password">
+        <input type="text" id="loginInput" placeholder="Твой ник" value="Аргум">
+        <input type="password" id="passInput" placeholder="Пароль" value="123">
         <button id="authBtn">Войти</button>
         <span class="toggle-auth" id="toggleAuth">Нет аккаунта? Создать</span>
         <div class="clan-tag">⚔️ только свои</div>
@@ -790,6 +699,7 @@
 
     <!-- CHAT -->
     <div class="chat-screen" id="chatScreen">
+        <!-- HEADER -->
         <div class="chat-header">
             <div class="user">
                 <div class="avatar" id="myAvatar">A</div>
@@ -799,25 +709,31 @@
                 </div>
             </div>
             <div class="actions">
-                <i class="fas fa-phone" id="voiceCallBtn" title="Голосовой звонок"></i>
+                <button class="btn-create-group" id="createGroupBtn"><i class="fas fa-users"></i> Группа</button>
+                <i class="fas fa-phone" id="voiceCallBtn" title="Звонок"></i>
                 <i class="fas fa-video" id="videoCallBtn" title="Видеозвонок"></i>
                 <i class="fas fa-user-plus" id="addContactBtn" title="Добавить контакт"></i>
                 <i class="fas fa-sign-out-alt" id="logoutBtn" title="Выйти"></i>
             </div>
         </div>
 
-        <div class="messages" id="messages">
-            <div class="msg system">Добро пожаловать в ClanChat ✦</div>
+        <!-- CHAT LIST -->
+        <div class="chat-list" id="chatList">
+            <!-- чаты будут добавляться сюда -->
         </div>
 
-        <div class="input-area">
-            <button class="btn-icon" id="attachBtn" title="Файл"><i class="fas fa-paperclip"></i></button>
-            <button class="btn-icon" id="voiceMsgBtn" title="Голосовое"><i class="fas fa-microphone"></i></button>
-            <button class="btn-icon" id="circleBtn" title="Кружочек"><i class="fas fa-circle"></i></button>
-            <input type="text" id="msgInput" placeholder="Сообщение..." autocomplete="off">
-            <button class="btn-send" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
-            <div class="recording-indicator" id="recordingIndicator">
-                <span class="dot"></span> Запись...
+        <!-- MESSAGES WRAP -->
+        <div class="messages-wrap" id="messagesWrap">
+            <div class="messages" id="messages"></div>
+            <div class="input-area" id="inputArea">
+                <button class="btn-icon" id="attachBtn" title="Файл"><i class="fas fa-paperclip"></i></button>
+                <button class="btn-icon" id="voiceMsgBtn" title="Голосовое"><i class="fas fa-microphone"></i></button>
+                <button class="btn-icon" id="circleBtn" title="Кружочек"><i class="fas fa-circle"></i></button>
+                <input type="text" id="msgInput" placeholder="Сообщение...">
+                <button class="btn-send" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+                <div class="recording-indicator" id="recordingIndicator">
+                    <span class="dot"></span> Запись...
+                </div>
             </div>
         </div>
     </div>
@@ -851,12 +767,16 @@
         const msgInput = document.getElementById('msgInput');
         const sendBtn = document.getElementById('sendBtn');
         const messagesDiv = document.getElementById('messages');
+        const chatList = document.getElementById('chatList');
+        const messagesWrap = document.getElementById('messagesWrap');
+        const inputArea = document.getElementById('inputArea');
         const myUsername = document.getElementById('myUsername');
         const myAvatar = document.getElementById('myAvatar');
         const logoutBtn = document.getElementById('logoutBtn');
         const voiceCallBtn = document.getElementById('voiceCallBtn');
         const videoCallBtn = document.getElementById('videoCallBtn');
         const addContactBtn = document.getElementById('addContactBtn');
+        const createGroupBtn = document.getElementById('createGroupBtn');
         const voiceMsgBtn = document.getElementById('voiceMsgBtn');
         const circleBtn = document.getElementById('circleBtn');
         const attachBtn = document.getElementById('attachBtn');
@@ -882,17 +802,30 @@
         let audioChunks = [];
         let isRecording = false;
         let contacts = [];
+        let chats = [];
+        let currentChatId = null;
 
         // ============================================================
         //  FAKE DB (localStorage)
         // ============================================================
         function getUsers() { return JSON.parse(localStorage.getItem('clanchat_users') || '{}'); }
 
-        function saveUsers(users) { localStorage.setItem('clanchat_users', JSON.stringify(users)); }
+        function saveUsers(u) { localStorage.setItem('clanchat_users', JSON.stringify(u)); }
 
-        function getMessages() { return JSON.parse(localStorage.getItem('clanchat_messages') || '[]'); }
+        function getChats() { return JSON.parse(localStorage.getItem('clanchat_chats') || '[]'); }
 
-        function saveMessages(msgs) { localStorage.setItem('clanchat_messages', JSON.stringify(msgs)); }
+        function saveChats(c) { localStorage.setItem('clanchat_chats', JSON.stringify(c)); }
+
+        function getMessages(chatId) {
+            const all = JSON.parse(localStorage.getItem('clanchat_messages') || '{}');
+            return all[chatId] || [];
+        }
+
+        function saveMessages(chatId, msgs) {
+            const all = JSON.parse(localStorage.getItem('clanchat_messages') || '{}');
+            all[chatId] = msgs;
+            localStorage.setItem('clanchat_messages', JSON.stringify(all));
+        }
 
         function getContacts() { return JSON.parse(localStorage.getItem('clanchat_contacts') || '[]'); }
 
@@ -905,10 +838,9 @@
             const login = loginInput.value.trim();
             const pass = passInput.value.trim();
             if (!login || !pass) { alert('Введи логин и пароль'); return; }
-
             const users = getUsers();
             if (isRegister) {
-                if (users[login]) { alert('Такой ник уже занят'); return; }
+                if (users[login]) { alert('Ник занят'); return; }
                 users[login] = { password: pass, name: login };
                 saveUsers(users);
                 alert('Аккаунт создан! Войди.');
@@ -917,12 +849,10 @@
                 authBtn.textContent = 'Войти';
                 return;
             }
-
             if (!users[login] || users[login].password !== pass) {
                 alert('Неверный логин или пароль');
                 return;
             }
-
             currentUser = login;
             startChat();
         }
@@ -934,9 +864,24 @@
             myUsername.textContent = currentUser;
             myAvatar.textContent = currentUser[0].toUpperCase();
             contacts = getContacts();
-            loadMessages();
+            chats = getChats();
+            if (chats.length === 0) {
+                // Создаём общий чат "Общий"
+                const defaultChat = {
+                    id: 'general',
+                    name: 'Общий',
+                    type: 'group',
+                    members: ['Все'],
+                    createdBy: 'system'
+                };
+                chats.push(defaultChat);
+                saveChats(chats);
+            }
+            renderChatList();
+            if (chats.length > 0) {
+                openChat(chats[0].id);
+            }
             initPeer();
-            addSystemMessage('⚔️ Ты в клане. Пиши своим.');
         }
 
         function logout() {
@@ -947,10 +892,9 @@
             chatScreen.classList.remove('active');
             authScreen.style.display = 'flex';
             messagesDiv.innerHTML = '';
+            chatList.innerHTML = '';
+            if (callModal.classList.contains('active')) callModal.classList.remove('active');
             document.title = 'ClanChat';
-            if (callModal.classList.contains('active')) {
-                callModal.classList.remove('active');
-            }
         }
 
         // ============================================================
@@ -960,12 +904,7 @@
             peer = new Peer(currentUser, {
                 config: { 'iceServers': [{ urls: 'stun:stun.l.google.com:19302' }] }
             });
-
-            peer.on('open', (id) => {
-                console.log('Peer открыт:', id);
-                addSystemMessage('🔗 Подключено. Твой ID: ' + id);
-            });
-
+            peer.on('open', (id) => console.log('Peer открыт:', id));
             peer.on('call', (call) => {
                 const isVideo = call.metadata && call.metadata.type === 'video';
                 navigator.mediaDevices.getUserMedia({ audio: true, video: isVideo })
@@ -977,38 +916,72 @@
                         callerName.textContent = call.metadata?.caller || 'Собеседник';
                         callerStatus.textContent = 'в разговоре';
                         callModal.classList.add('active');
-                        call.on('stream', (remoteStream) => {
-                            remoteVideo.srcObject = remoteStream;
-                        });
+                        call.on('stream', (s) => { remoteVideo.srcObject = s; });
                         call.on('close', () => endCall());
-                        addSystemMessage('📞 Входящий звонок от ' + (call.metadata?.caller || 'неизвестного'));
                     })
-                    .catch(() => { alert('Ошибка доступа к медиа'); });
+                    .catch(() => alert('Ошибка доступа к медиа'));
             });
-
             peer.on('error', (err) => {
                 console.error('Peer error:', err);
-                if (err.type === 'peer-unavailable') {
-                    alert('Пользователь не в сети');
-                }
+                if (err.type === 'peer-unavailable') alert('Пользователь не в сети');
             });
+        }
+
+        // ============================================================
+        //  CHAT LIST
+        // ============================================================
+        function renderChatList() {
+            chatList.innerHTML = '';
+            chats.forEach(chat => {
+                const div = document.createElement('div');
+                div.className = 'chat-item' + (chat.id === currentChatId ? ' active' : '');
+                const avatar = chat.type === 'group' ? '👥' : chat.name[0].toUpperCase();
+                const color = chat.type === 'group' ? '#8a6a4a' : '#3d8a7a';
+                const lastMsg = getLastMessage(chat.id);
+                div.innerHTML = `
+                    <div class="chat-avatar" style="background:${color}">${avatar}</div>
+                    <div class="chat-info">
+                        <div class="chat-name">${chat.name}</div>
+                        <div class="chat-last">${lastMsg ? lastMsg.text : 'Нет сообщений'}</div>
+                    </div>
+                    <div class="chat-meta">
+                        <span class="time">${lastMsg ? new Date(lastMsg.time).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}) : ''}</span>
+                    </div>
+                `;
+                div.addEventListener('click', () => openChat(chat.id));
+                chatList.appendChild(div);
+            });
+        }
+
+        function getLastMessage(chatId) {
+            const msgs = getMessages(chatId);
+            return msgs.length > 0 ? msgs[msgs.length - 1] : null;
+        }
+
+        // ============================================================
+        //  OPEN CHAT
+        // ============================================================
+        function openChat(chatId) {
+            currentChatId = chatId;
+            renderChatList();
+            messagesWrap.classList.add('active');
+            inputArea.classList.add('active');
+            loadMessages(chatId);
+            // Показать имя чата в хедере (можно добавить)
+            const chat = chats.find(c => c.id === chatId);
+            if (chat) {
+                document.querySelector('.chat-header .user .info .name').textContent = chat.name;
+            }
         }
 
         // ============================================================
         //  MESSAGES
         // ============================================================
-        function addMessage(text, sender, type = 'text', extra = null) {
-            const msgs = getMessages();
-            msgs.push({ text, sender, type, extra, time: Date.now() });
-            saveMessages(msgs);
-            renderMessage({ text, sender, type, extra, time: Date.now() });
-            if (sender !== currentUser && Notification.permission === 'granted') {
-                new Notification('ClanChat: ' + sender, { body: text });
-            }
-            // вибрация на телефоне
-            if (sender !== currentUser && navigator.vibrate) {
-                navigator.vibrate(30);
-            }
+        function loadMessages(chatId) {
+            messagesDiv.innerHTML = '';
+            const msgs = getMessages(chatId);
+            msgs.forEach(m => renderMessage(m));
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
 
         function renderMessage(msg) {
@@ -1016,55 +989,51 @@
             const isSelf = msg.sender === currentUser;
             div.className = `msg ${isSelf ? 'self' : 'other'}`;
             let content = msg.text;
-
             if (msg.type === 'voice') {
-                content = `<div class="voice"><i class="fas fa-microphone"></i> <audio controls src="${msg.extra}"></audio></div>`;
-            } else if (msg.type === 'circle') {
-                content = `<video class="video-preview" src="${msg.extra}" controls autoplay muted loop playsinline></video>`;
-            } else if (msg.type === 'file') {
-                const icon = msg.text.includes('.jpg') || msg.text.includes('.png') ? 'fa-image' : 'fa-file';
                 content =
-                    `<a href="${msg.extra}" target="_blank" class="file-link"><i class="fas ${icon}"></i> ${msg.text}</a>`;
-            } else if (msg.type === 'call') {
-                content = `<div class="call-info"><i class="fas fa-phone"></i> ${msg.text}</div>`;
+                    `<div class="voice"><i class="fas fa-microphone"></i> <audio controls src="${msg.extra}"></audio></div>`;
+            } else if (msg.type === 'circle') {
+                content =
+                    `<video class="video-preview" src="${msg.extra}" controls autoplay muted loop playsinline></video>`;
+            } else if (msg.type === 'file') {
+                content =
+                    `<a href="${msg.extra}" target="_blank" class="file-link"><i class="fas fa-file"></i> ${msg.text}</a>`;
             }
-
             const time = new Date(msg.time).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
             div.innerHTML = `${content}<span class="time">${time}</span>`;
             messagesDiv.appendChild(div);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
 
-        function loadMessages() {
-            messagesDiv.innerHTML = '';
-            const msgs = getMessages();
-            msgs.forEach(m => renderMessage(m));
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-
-        function addSystemMessage(text) {
-            const div = document.createElement('div');
-            div.className = 'msg system';
-            div.textContent = text;
-            messagesDiv.appendChild(div);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        function addMessageToChat(chatId, text, sender, type = 'text', extra = null) {
+            const msgs = getMessages(chatId);
+            msgs.push({ text, sender, type, extra, time: Date.now() });
+            saveMessages(chatId, msgs);
+            if (chatId === currentChatId) {
+                renderMessage({ text, sender, type, extra, time: Date.now() });
+            }
+            renderChatList();
+            if (sender !== currentUser && Notification.permission === 'granted') {
+                new Notification('ClanChat: ' + sender, { body: text });
+            }
+            if (sender !== currentUser && navigator.vibrate) navigator.vibrate(30);
         }
 
         // ============================================================
-        //  SEND TEXT
+        //  SEND
         // ============================================================
         function sendText() {
             const text = msgInput.value.trim();
-            if (!text) return;
-            addMessage(text, currentUser);
+            if (!text || !currentChatId) return;
+            addMessageToChat(currentChatId, text, currentUser);
             msgInput.value = '';
         }
 
         // ============================================================
-        //  VOICE RECORDING
+        //  VOICE
         // ============================================================
         function startVoiceRecording() {
-            if (isRecording) return;
+            if (isRecording || !currentChatId) return;
             navigator.mediaDevices.getUserMedia({ audio: true })
                 .then(stream => {
                     isRecording = true;
@@ -1076,7 +1045,7 @@
                     mediaRecorder.onstop = () => {
                         const blob = new Blob(audioChunks, { type: 'audio/ogg' });
                         const url = URL.createObjectURL(blob);
-                        addMessage('🎤 Голосовое', currentUser, 'voice', url);
+                        addMessageToChat(currentChatId, '🎤 Голосовое', currentUser, 'voice', url);
                         stream.getTracks().forEach(t => t.stop());
                         recordingIndicator.style.display = 'none';
                         isRecording = false;
@@ -1090,10 +1059,10 @@
         }
 
         // ============================================================
-        //  CIRCLE (video message)
+        //  CIRCLE
         // ============================================================
         function startCircleRecording() {
-            if (isRecording) return;
+            if (isRecording || !currentChatId) return;
             navigator.mediaDevices.getUserMedia({ audio: true, video: { facingMode: 'user', width: { ideal: 240 },
                     height: { ideal: 240 } } })
                 .then(stream => {
@@ -1106,7 +1075,7 @@
                     rec.onstop = () => {
                         const blob = new Blob(chunks, { type: 'video/webm' });
                         const url = URL.createObjectURL(blob);
-                        addMessage('📹 Кружочек', currentUser, 'circle', url);
+                        addMessageToChat(currentChatId, '📹 Кружочек', currentUser, 'circle', url);
                         stream.getTracks().forEach(t => t.stop());
                         recordingIndicator.style.display = 'none';
                         isRecording = false;
@@ -1125,9 +1094,7 @@
         function startCall(isVideo) {
             if (!peer) { alert('Подожди подключения...'); return; }
             const target = prompt('Введите ник собеседника:');
-            if (!target) return;
-            if (target === currentUser) { alert('Нельзя позвонить самому себе'); return; }
-
+            if (!target || target === currentUser) return;
             navigator.mediaDevices.getUserMedia({ audio: true, video: isVideo })
                 .then(stream => {
                     localStream = stream;
@@ -1139,12 +1106,11 @@
                     callerName.textContent = target;
                     callerStatus.textContent = 'соединение...';
                     callModal.classList.add('active');
-                    call.on('stream', (remoteStream) => {
-                        remoteVideo.srcObject = remoteStream;
-                        callerStatus.textContent = 'в разговоре';
-                    });
+                    call.on('stream', (s) => { remoteVideo.srcObject = s;
+                        callerStatus.textContent = 'в разговоре'; });
                     call.on('close', () => endCall());
-                    addMessage('📞 Звонок ' + target + (isVideo ? ' (видео)' : ''), currentUser, 'call');
+                    addMessageToChat(currentChatId || 'general', '📞 Звонок ' + target + (isVideo ? ' (видео)' : ''),
+                        currentUser, 'text');
                 })
                 .catch(() => alert('Ошибка доступа к медиа'));
         }
@@ -1160,21 +1126,42 @@
             isMuted = false;
             muteBtn.innerHTML = '<i class="fas fa-microphone"></i>';
             muteBtn.classList.remove('muted');
-            callerStatus.textContent = 'звонок завершён';
         }
 
         // ============================================================
-        //  CONTACTS
+        //  CONTACTS & GROUPS
         // ============================================================
         function addContact() {
-            const name = prompt('Введите ник для добавления в контакты:');
+            const name = prompt('Введите ник:');
             if (!name) return;
             const users = getUsers();
-            if (!users[name]) { alert('Пользователь не найден в клане'); return; }
+            if (!users[name]) { alert('Пользователь не найден'); return; }
             if (contacts.includes(name)) { alert('Уже в контактах'); return; }
             contacts.push(name);
             saveContacts(contacts);
-            addSystemMessage('➕ ' + name + ' добавлен в контакты');
+            // Создаём личный чат
+            const chatId = 'dm_' + [currentUser, name].sort().join('_');
+            if (!chats.find(c => c.id === chatId)) {
+                chats.push({ id: chatId, name: name, type: 'dm', members: [currentUser, name] });
+                saveChats(chats);
+                renderChatList();
+            }
+            alert('➕ ' + name + ' добавлен');
+        }
+
+        function createGroup() {
+            const name = prompt('Название группы:');
+            if (!name) return;
+            const members = prompt('Участники (через запятую):');
+            if (!members) return;
+            const list = members.split(',').map(s => s.trim()).filter(s => s);
+            if (!list.includes(currentUser)) list.push(currentUser);
+            const chatId = 'group_' + Date.now();
+            chats.push({ id: chatId, name: name, type: 'group', members: list, createdBy: currentUser });
+            saveChats(chats);
+            renderChatList();
+            openChat(chatId);
+            addMessageToChat(chatId, 'Группа создана! Участники: ' + list.join(', '), 'system', 'text');
         }
 
         // ============================================================
@@ -1190,11 +1177,10 @@
         msgInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendText(); });
         logoutBtn.addEventListener('click', logout);
         addContactBtn.addEventListener('click', addContact);
-
+        createGroupBtn.addEventListener('click', createGroup);
         voiceCallBtn.addEventListener('click', () => startCall(false));
         videoCallBtn.addEventListener('click', () => startCall(true));
         hangupBtn.addEventListener('click', endCall);
-
         muteBtn.addEventListener('click', () => {
             if (localStream) {
                 isMuted = !isMuted;
@@ -1204,21 +1190,18 @@
                 muteBtn.classList.toggle('muted');
             }
         });
-
         voiceMsgBtn.addEventListener('click', startVoiceRecording);
         circleBtn.addEventListener('click', startCircleRecording);
-
         attachBtn.addEventListener('click', () => {
+            if (!currentChatId) return;
             const input = document.createElement('input');
             input.type = 'file';
-            input.accept = '*/*';
             input.onchange = (e) => {
                 const file = e.target.files[0];
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = (ev) => {
-                        const dataUrl = ev.target.result;
-                        addMessage('📎 ' + file.name, currentUser, 'file', dataUrl);
+                        addMessageToChat(currentChatId, '📎 ' + file.name, currentUser, 'file', ev.target.result);
                     };
                     reader.readAsDataURL(file);
                 }
@@ -1237,33 +1220,10 @@
             }
             loginInput.value = 'Аргум';
             passInput.value = '123';
-
-            if (Notification.permission === 'default') {
-                Notification.requestPermission();
-            }
-
-            // Авто-вход для демо
-            setTimeout(() => {
-                if (!currentUser) {
-                    // можно автоматически войти, но оставим выбор
-                }
-            }, 300);
+            if (Notification.permission === 'default') Notification.requestPermission();
         });
 
-        // Закрытие модалки по клику вне видео (на затемнение)
-        callModal.addEventListener('click', (e) => {
-            if (e.target === callModal && currentCall) {
-                // ничего не делаем, чтобы случайно не сбросить звонок
-            }
-        });
-
-        // Обработка ошибок медиа
-        navigator.mediaDevices.getUserMedia({ audio: true, video: true })
-            .then(stream => stream.getTracks().forEach(t => t.stop()))
-            .catch(() => console.log('Медиа доступны'));
-
-        console.log('⚔️ ClanChat v2.0 запущен');
-        console.log('📱 Полная адаптация под все устройства');
+        console.log('⚔️ ClanChat v3.0 — чаты, группы, кружочки');
     })();
 </script>
 </body>
