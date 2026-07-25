@@ -3,114 +3,137 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Анонимный Чат</title>
+  <title>Мессенджер</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #0f172a;
-      color: #f8fafc;
-      font-family: system-ui, -apple-system, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .modal {
-      background: #1e293b;
-      padding: 24px;
-      border-radius: 16px;
-      width: 100%;
-      max-width: 360px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-      text-align: center;
-    }
-    .hidden { display: none; }
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 8px;
-      border: 1px solid #334155;
-      background: #0f172a;
-      color: #fff;
-      box-sizing: border-box;
-      font-size: 14px;
-    }
-    button, .btn-link {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border-radius: 8px;
-      border: none;
-      background: #0284c7;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      text-decoration: none;
-      box-sizing: border-box;
-    }
-    button:hover, .btn-link:hover { background: #0369a1; }
-    .code-inputs {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      margin: 16px 0;
-    }
-    .code-inputs input {
-      width: 50px;
-      height: 50px;
-      text-align: center;
-      font-size: 20px;
-      margin: 0;
-    }
-    .hint {
-      font-size: 12px;
-      color: #94a3b8;
-      margin-top: 4px;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #fff; height: 100vh; display: flex; overflow: hidden; }
+    .hidden { display: none !important; }
+    
+    /* Модальное окно */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .auth-card { background: #1e293b; padding: 28px; border-radius: 16px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
+    .auth-card h2 { margin-bottom: 8px; font-size: 22px; }
+    .auth-card p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
+    .auth-input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 14px; outline: none; }
+    .auth-input:focus { border-color: #38bdf8; }
+    .btn { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #0284c7; color: white; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-block; }
+    .btn:hover { background: #0369a1; }
+    .btn-secondary { background: #334155; margin-top: 8px; }
+    .btn-secondary:hover { background: #475569; }
+    .code-box { display: flex; justify-content: center; gap: 8px; margin: 16px 0; }
+    .code-box input { width: 45px; height: 50px; text-align: center; font-size: 20px; font-weight: bold; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #fff; }
+
+    /* Аккаунты */
+    .acc-item { background: #0f172a; border: 1px solid #334155; padding: 12px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+    .acc-item:hover { border-color: #38bdf8; }
+
+    /* Главный интерфейс */
+    .app-container { width: 100vw; height: 100vh; display: flex; }
+    .sidebar { width: 300px; border-right: 1px solid #1e293b; display: flex; flex-direction: column; background: #0f172a; }
+    .sidebar-header { padding: 16px; border-bottom: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center; }
+    .user-list { flex: 1; overflow-y: auto; }
+    .user-item { padding: 12px 16px; border-bottom: 1px solid #1e293b; cursor: pointer; transition: 0.2s; }
+    .user-item:hover, .user-item.active { background: #1e293b; }
+    .chat-area { flex: 1; display: flex; flex-direction: column; background: #020617; }
+    .chat-header { padding: 16px; background: #0f172a; border-bottom: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center; }
+    .messages-box { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .chat-input-area { padding: 16px; background: #0f172a; border-top: 1px solid #1e293b; display: flex; gap: 10px; align-items: center; }
+    
+    .msg { max-width: 60%; padding: 10px 14px; border-radius: 12px; font-size: 14px; word-break: break-word; }
+    .msg.my { background: #0284c7; align-self: flex-end; border-bottom-right-radius: 2px; }
+    .msg.their { background: #1e293b; align-self: flex-start; border-bottom-left-radius: 2px; }
+    
+    .logout-btn { background: #ef4444; border: none; padding: 6px 12px; color: white; border-radius: 6px; cursor: pointer; font-size: 12px; }
   </style>
 </head>
 <body>
 
-  <div id="authModal" class="modal">
-    <!-- ШАГ 1: Ввод Ника и Номера -->
-    <div id="step1">
-      <h2>Авторизация</h2>
-      <input type="text" id="nickInput" placeholder="Ваш Никнейм">
-      <input type="tel" id="phoneInput" placeholder="Номер телефона (+7, +375, +86)">
-      <div class="hint">Поддерживаются: РФ/КЗ (+7), Беларусь (+375), Китай (+86)</div>
-      <button onclick="requestCode()">Далее</button>
-    </div>
-
-    <!-- ШАГ 2: Переход в Бота и ввод Кода -->
-    <div id="step2" class="hidden">
-      <h2>Подтверждение</h2>
-      <p style="font-size:14px; color:#cbd5e1;">Перейдите в бота, нажмите START и введите полученный код ниже:</p>
+  <!-- АВТОРИЗАЦИЯ -->
+  <div id="authModal" class="modal-overlay">
+    <div class="auth-card">
       
-      <a id="tgBotBtn" class="btn-link" target="_blank">Открыть Бота и получить код</a>
-
-      <div class="code-inputs">
-        <input type="text" id="c1" maxlength="1" oninput="moveFocus(this, 'c2')">
-        <input type="text" id="c2" maxlength="1" oninput="moveFocus(this, 'c3')">
-        <input type="text" id="c3" maxlength="1" oninput="moveFocus(this, 'c4')">
-        <input type="text" id="c4" maxlength="1">
+      <!-- ШАГ 1: Номер -->
+      <div id="stepPhone">
+        <h2>Вход в Чат</h2>
+        <p>Введите ваш номер телефона</p>
+        <input type="tel" id="phoneInput" class="auth-input" placeholder="Номер (+7, +375, +86)">
+        <p style="font-size:11px; color:#64748b; margin-bottom:12px;">Поддерживаются: РФ/КЗ (+7), РБ (+375), Китай (+86)</p>
+        <button class="btn" onclick="checkPhone()">Продолжить</button>
       </div>
 
-      <button onclick="verifyCode()">Войти в Чат</button>
+      <!-- ШАГ 2: Выбор или Создание Аккаунта -->
+      <div id="stepAccounts" class="hidden">
+        <h2>Выбор Аккаунта</h2>
+        <p id="accPhoneTitle"></p>
+        <div id="accountsList"></div>
+        <button id="newAccBtn" class="btn btn-secondary" onclick="showNewAccountForm()">+ Создать новый аккаунт</button>
+      </div>
+
+      <!-- ШАГ 3: Имя для Нового Аккаунта -->
+      <div id="stepNick" class="hidden">
+        <h2>Новый Аккаунт</h2>
+        <p>Укажите ваш Никнейм</p>
+        <input type="text" id="nickInput" class="auth-input" placeholder="Никнейм">
+        <button class="btn" onclick="requestCode()">Далее</button>
+        <button class="btn btn-secondary" onclick="backToAccounts()">Назад</button>
+      </div>
+
+      <!-- ШАГ 4: Код из Телеграм Бота -->
+      <div id="stepCode" class="hidden">
+        <h2>Подтверждение</h2>
+        <p>Нажмите <b>START</b> в боте и введите полученный код:</p>
+        <a id="tgBotBtn" class="btn" style="margin-bottom: 12px;" target="_blank">Открыть Telegram-бота</a>
+        
+        <div class="code-box">
+          <input type="text" id="c1" maxlength="1" oninput="moveFocus(this, 'c2')">
+          <input type="text" id="c2" maxlength="1" oninput="moveFocus(this, 'c3')">
+          <input type="text" id="c3" maxlength="1" oninput="moveFocus(this, 'c4')">
+          <input type="text" id="c4" maxlength="1">
+        </div>
+
+        <button class="btn" onclick="verifyCode()">Войти в Чат</button>
+      </div>
+
     </div>
   </div>
 
-  <div id="chatApp" class="hidden">
-    <h2>Чат успешно запущен!</h2>
-    <p id="userInfo"></p>
+  <!-- ЧАТ -->
+  <div class="app-container">
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div>
+          <h3 id="myNickDisplay">Чат</h3>
+          <span id="myPeerDisplay" style="font-size: 11px; color: #38bdf8;">ID: -</span>
+        </div>
+        <button class="logout-btn" onclick="logout()">Выйти</button>
+      </div>
+      <div class="user-list" id="usersList"></div>
+    </div>
+
+    <div class="chat-area">
+      <div class="chat-header">
+        <h4 id="chatWithTitle">Выберите пользователя для общения</h4>
+      </div>
+
+      <div class="messages-box" id="messagesBox">
+        <div style="text-align:center; color:#64748b; margin-top:40px;">Выберите собеседника из списка слева</div>
+      </div>
+
+      <div class="chat-input-area">
+        <input type="text" id="msgInput" class="auth-input" placeholder="Напишите сообщение..." style="margin:0;" onkeypress="handleKeyPress(event)">
+        <button class="btn" style="width: auto; padding: 12px 20px;" onclick="sendTextMessage()">Отправить</button>
+      </div>
+    </div>
   </div>
 
   <script>
-    // ⚠️ Убедись, что тут указан ТВОЙ ТЕКУЩИЙ NGROK АДРЕС:
+    // ⚠️ ВАШ ТЕКУЩИЙ АДРЕС NGROK:
     const API_URL = "https://uncolored-enunciate-dial.ngrok-free.dev/api";
-    let currentFormattedPhone = "";
+    
+    let currentUser = null;
+    let currentPhone = "";
+    let selectedNick = "";
+    let activePeerId = null;
 
     function moveFocus(current, nextId) {
       if (current.value.length >= 1) {
@@ -118,7 +141,6 @@
       }
     }
 
-    // Авто-вход по IP
     async function checkAutoLogin() {
       try {
         const res = await fetch(`${API_URL}/auto-login`, {
@@ -128,34 +150,88 @@
         if (data.status === 'ok') {
           setUserProfile(data.user);
         }
+      } catch (err) {}
+    }
+
+    async function checkPhone() {
+      const phone = document.getElementById('phoneInput').value.trim();
+      if (!phone) return alert('Введите номер телефона!');
+
+      try {
+        const res = await fetch(`${API_URL}/check-phone`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+          body: JSON.stringify({ phone })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail);
+
+        currentPhone = data.phone;
+        renderAccounts(data.accounts);
+
       } catch (err) {
-        console.log("Авто-вход не прошёл:", err);
+        alert('Ошибка: ' + err.message);
       }
     }
 
-    async function requestCode() {
-      const nickname = document.getElementById('nickInput').value.trim();
-      const phone = document.getElementById('phoneInput').value.trim();
+    function renderAccounts(accounts) {
+      document.getElementById('stepPhone').classList.add('hidden');
+      document.getElementById('stepAccounts').classList.remove('hidden');
+      document.getElementById('accPhoneTitle').innerText = `Номер: ${currentPhone}`;
 
-      if (!nickname || !phone) return alert('Заполните все поля!');
+      const list = document.getElementById('accountsList');
+      list.innerHTML = '';
+
+      accounts.forEach(acc => {
+        const div = document.createElement('div');
+        div.className = 'acc-item';
+        div.innerHTML = `<div><b>${acc.name}</b></div><div style="font-size:12px; color:#38bdf8;">Войти →</div>`;
+        div.onclick = () => selectExistingAccount(acc.name);
+        list.appendChild(div);
+      });
+
+      const newBtn = document.getElementById('newAccBtn');
+      if (accounts.length >= 2) {
+        newBtn.classList.add('hidden');
+      } else {
+        newBtn.classList.remove('hidden');
+      }
+    }
+
+    function selectExistingAccount(nick) {
+      selectedNick = nick;
+      requestCode();
+    }
+
+    function showNewAccountForm() {
+      document.getElementById('stepAccounts').classList.add('hidden');
+      document.getElementById('stepNick').classList.remove('hidden');
+    }
+
+    function backToAccounts() {
+      document.getElementById('stepNick').classList.add('hidden');
+      document.getElementById('stepAccounts').classList.remove('hidden');
+    }
+
+    async function requestCode() {
+      if (!selectedNick) {
+        selectedNick = document.getElementById('nickInput').value.trim();
+      }
+      if (!selectedNick) return alert('Укажите никнейм!');
 
       try {
         const res = await fetch(`${API_URL}/request-code`, {
           method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'ngrok-skip-browser-warning': 'true'
-          },
-          body: JSON.stringify({ phone, nickname })
+          headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+          body: JSON.stringify({ phone: currentPhone, nickname: selectedNick })
         });
         const data = await res.json();
-
         if (!res.ok) throw new Error(data.detail);
 
-        currentFormattedPhone = data.phone;
         document.getElementById('tgBotBtn').href = data.bot_link;
-        document.getElementById('step1').classList.add('hidden');
-        document.getElementById('step2').classList.remove('hidden');
+        document.getElementById('stepAccounts').classList.add('hidden');
+        document.getElementById('stepNick').classList.add('hidden');
+        document.getElementById('stepCode').classList.remove('hidden');
 
       } catch (err) {
         alert('Ошибка: ' + err.message);
@@ -163,23 +239,16 @@
     }
 
     async function verifyCode() {
-      const nickname = document.getElementById('nickInput').value.trim();
-      const phone = currentFormattedPhone || document.getElementById('phoneInput').value.trim();
       const code = document.getElementById('c1').value + document.getElementById('c2').value + document.getElementById('c3').value + document.getElementById('c4').value;
-
-      if (code.length < 4) return alert('Введите 4-значный код!');
+      if (code.length < 4) return alert('Введите 4-значный код полностью!');
 
       try {
         const res = await fetch(`${API_URL}/verify-code`, {
           method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'ngrok-skip-browser-warning': 'true'
-          },
-          body: JSON.stringify({ phone, nickname, code })
+          headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
+          body: JSON.stringify({ phone: currentPhone, nickname: selectedNick, code })
         });
         const data = await res.json();
-
         if (!res.ok) throw new Error(data.detail);
 
         setUserProfile(data.user);
@@ -190,9 +259,89 @@
     }
 
     function setUserProfile(user) {
+      currentUser = user;
       document.getElementById('authModal').classList.add('hidden');
-      document.getElementById('chatApp').classList.remove('hidden');
-      document.getElementById('userInfo').innerText = `Вы вошли как: ${user.name} (${user.phone})`;
+      document.getElementById('myNickDisplay').innerText = user.name;
+      document.getElementById('myPeerDisplay').innerText = `ID: ${user.peer_id}`;
+      loadUsers();
+      setInterval(loadUsers, 5000);
+      setInterval(loadMessages, 2000);
+    }
+
+    async function loadUsers() {
+      try {
+        const res = await fetch(`${API_URL}/users`);
+        const data = await res.json();
+        const list = document.getElementById('usersList');
+        list.innerHTML = '';
+
+        data.users.forEach(u => {
+          if (currentUser && u.peer_id === currentUser.peer_id) return;
+          const div = document.createElement('div');
+          div.className = `user-item ${activePeerId === u.peer_id ? 'active' : ''}`;
+          div.innerHTML = `<b>${u.name}</b><div style="font-size:11px; color:#64748b;">ID: ${u.peer_id}</div>`;
+          div.onclick = () => selectUserChat(u);
+          list.appendChild(div);
+        });
+      } catch (err) {}
+    }
+
+    function selectUserChat(user) {
+      activePeerId = user.peer_id;
+      document.getElementById('chatWithTitle').innerText = `Чат с ${user.name} (ID: ${user.peer_id})`;
+      loadUsers();
+      loadMessages();
+    }
+
+    async function sendTextMessage() {
+      const text = document.getElementById('msgInput').value.trim();
+      if (!activePeerId || !text) return;
+
+      try {
+        await fetch(`${API_URL}/save-message`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sender_id: currentUser.peer_id,
+            receiver_id: activePeerId,
+            msg_type: 'text',
+            content: text
+          })
+        });
+
+        document.getElementById('msgInput').value = '';
+        loadMessages();
+      } catch (err) {}
+    }
+
+    async function loadMessages() {
+      if (!activePeerId || !currentUser) return;
+
+      try {
+        const res = await fetch(`${API_URL}/get-messages/${currentUser.peer_id}/${activePeerId}`);
+        const data = await res.json();
+        
+        const box = document.getElementById('messagesBox');
+        box.innerHTML = '';
+
+        data.messages.forEach(m => {
+          const div = document.createElement('div');
+          div.className = `msg ${m.sender_id === currentUser.peer_id ? 'my' : 'their'}`;
+          div.innerText = m.content;
+          box.appendChild(div);
+        });
+
+        box.scrollTop = box.scrollHeight;
+      } catch (err) {}
+    }
+
+    function handleKeyPress(e) {
+      if (e.key === 'Enter') sendTextMessage();
+    }
+
+    async function logout() {
+      await fetch(`${API_URL}/logout`, { method: 'POST' });
+      location.reload();
     }
 
     window.onload = checkAutoLogin;
