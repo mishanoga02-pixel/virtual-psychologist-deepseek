@@ -3,143 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Telegram Web</title>
+    <title>Telegram Mobile</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body { background-color: #0e1621; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
         
-        /* Мобильный контейнер */
-        .app-container { width: 100%; max-width: 480px; height: 100%; background: #17212b; display: flex; flex-direction: column; position: relative; overflow: hidden; }
-        @media (min-width: 481px) {
-            .app-container { height: 85vh; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .app-container { width: 100%; max-width: 420px; height: 100%; background: #17212b; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+        @media (min-width: 421px) {
+            .app-container { height: 90vh; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #2b2b2b; }
         }
 
-        /* Шапка */
-        .header { background: #212f3d; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #101923; z-index: 10; }
+        .header { background: #212f3d; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #101923; z-index: 10; }
         .header-title { font-size: 18px; font-weight: 600; }
         .header-btn { background: none; border: none; color: #5288c1; font-size: 16px; cursor: pointer; }
 
-        /* Контент экранов */
-        .screen { flex: 1; display: none; flex-direction: column; overflow-y: auto; }
+        .screen { flex: 1; display: none; flex-direction: column; overflow-y: auto; background: #17212b; }
         .screen.active { display: flex; }
 
-        /* Авторизация */
         .auth-box { padding: 24px; display: flex; flex-direction: column; justify-content: center; height: 100%; text-align: center; }
         .auth-box h2 { margin-bottom: 20px; color: #e4ecf3; }
         .input-field { width: 100%; padding: 12px 16px; margin-bottom: 12px; background: #182533; border: 1px solid #2b5278; border-radius: 8px; color: #fff; font-size: 16px; outline: none; }
-        .btn-primary { width: 100%; padding: 12px; background: #5288c1; border: none; border-radius: 8px; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-        .btn-primary:hover { background: #4072a7; }
+        .btn-primary { width: 100%; padding: 12px; background: #5288c1; border: none; border-radius: 8px; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; }
 
-        /* Список чатов / контактов */
-        .chat-list-item, .contact-item { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid #101923; cursor: pointer; transition: background 0.1s; }
+        .chat-list-item, .contact-item { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid #101923; cursor: pointer; }
         .chat-list-item:hover, .contact-item:hover { background: #202b36; }
         .avatar { width: 50px; height: 50px; border-radius: 50%; background: #2b5278; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; margin-right: 12px; color: #fff; flex-shrink: 0; }
         .chat-info { flex: 1; min-width: 0; }
         .chat-name { font-weight: 600; font-size: 16px; margin-bottom: 4px; color: #fff; }
         .chat-preview { font-size: 14px; color: #879ab0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Профиль пользователя в шапке списка */
-        .user-profile-card { background: #182533; padding: 16px; margin: 12px; border-radius: 12px; display: flex; align-items: center; }
-        .user-profile-card .avatar { width: 60px; height: 60px; font-size: 24px; }
-
-        /* Экран чата */
         .chat-screen { display: none; flex-direction: column; height: 100%; background: #0e1621; position: absolute; top: 0; left: 0; width: 100%; z-index: 20; }
         .chat-screen.active { display: flex; }
         .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
         
-        /* Сообщения */
         .message { max-width: 75%; padding: 8px 12px; border-radius: 12px; font-size: 15px; position: relative; word-break: break-word; line-height: 1.4; }
         .message.incoming { background: #182533; align-self: flex-start; border-bottom-left-radius: 4px; }
         .message.outgoing { background: #2b5278; align-self: flex-end; border-bottom-right-radius: 4px; }
         .message-time { font-size: 11px; color: #879ab0; float: right; margin-top: 4px; margin-left: 8px; line-height: 18px; }
 
-        /* Кружочек (видеосообщение) */
-        .video-note-bubble { width: 180px; height: 180px; border-radius: 50%; overflow: hidden; background: #000; position: relative; border: 2px solid #5288c1; }
-        .video-note-bubble video { width: 100%; height: 100%; object-fit: cover; }
-
-        /* Поле ввода сообщения */
         .chat-input-bar { background: #17212b; padding: 10px 16px; display: flex; align-items: center; gap: 10px; border-top: 1px solid #101923; }
         .chat-input-bar input { flex: 1; background: #182533; border: none; border-radius: 20px; padding: 10px 16px; color: #fff; font-size: 15px; outline: none; }
-        .action-btn { background: none; border: none; color: #879ab0; font-size: 22px; cursor: pointer; padding: 4px; }
-        .action-btn:hover { color: #5288c1; }
+        .action-btn { background: none; border: none; color: #879ab0; font-size: 20px; cursor: pointer; padding: 4px; }
 
-        /* Нижняя навигация (как в Telegram на скрине) */
-        .bottom-nav { background: #17212b; border-top: 1px solid #101923; display: flex; justify-content: space-around; padding: 8px 0; }
-        .nav-item { background: none; border: none; color: #707579; display: flex; flex-direction: column; align-items: center; font-size: 12px; cursor: pointer; flex: 1; }
+        .bottom-nav { background: #17212b; border-top: 1px solid #101923; display: flex; justify-content: space-around; padding: 6px 0; }
+        .nav-item { background: none; border: none; color: #707579; display: flex; flex-direction: column; align-items: center; font-size: 11px; cursor: pointer; flex: 1; }
         .nav-item.active { color: #5288c1; }
-        .nav-item span { margin-top: 4px; }
-
-        /* Модальное окно добавления по ID / Юзеру */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 100; }
-        .modal-content { background: #17212b; padding: 20px; border-radius: 12px; width: 90%; max-width: 350px; border: 1px solid #2b5278; }
-        .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; }
-        
-        .fab { position: absolute; right: 20px; bottom: 80px; width: 56px; height: 56px; background: #5288c1; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 28px; border: none; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 50; }
+        .nav-item span { margin-top: 3px; }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <!-- ЭКРАН АВТОРИЗАЦИИ -->
+        <!-- АВТОРИЗАЦИЯ -->
         <div id="auth-screen" class="screen active">
             <div class="auth-box">
-                <h2>Вход в Telegram</h2>
-                <input type="text" id="phone-input" class="input-field" placeholder="Номер телефона (+7...)">
-                <input type="text" id="nick-input" class="input-field" placeholder="Ваш никнейм">
-                <button class="btn-primary" onclick="requestAuth()">Далее</button>
+                <h2>Вход</h2>
+                <input type="text" id="phone-input" class="input-field" placeholder="Телефон (+7...)">
+                <input type="text" id="nick-input" class="input-field" placeholder="Никнейм">
+                <button class="btn-primary" onclick="requestAuth()">Продолжить</button>
             </div>
         </div>
 
-        <!-- ЭКРАН ОЖИДАНИЯ КОДА -->
+        <!-- ВВОД КОДА -->
         <div id="code-screen" class="screen">
             <div class="auth-box">
-                <h2>Подтверждение</h2>
-                <p style="color: #879ab0; margin-bottom: 15px; font-size: 14px;">Бот отправил вам код в Telegram.</p>
-                <input type="text" id="code-input" class="input-field" placeholder="Введите 4-значный код">
-                <button class="btn-primary" onclick="verifyCode()">Войти</button>
+                <h2>Код из Telegram</h2>
+                <p style="color: #879ab0; margin-bottom: 15px; font-size: 14px;">Бот отправил код в чат.</p>
+                <input type="text" id="code-input" class="input-field" placeholder="4-значный код">
+                <button class="btn-primary" onclick="verifyCode()">Подтвердить</button>
             </div>
         </div>
 
-        <!-- ОСНОВНОЙ ИНТЕРФЕЙС (ЧАТЫ) -->
+        <!-- ГЛАВНЫЙ ЭКРАН С ВКЛАДКАМИ -->
         <div id="main-screen" class="screen" style="flex-direction: column;">
             <div class="header">
                 <span class="header-title" id="app-header-title">Чаты</span>
                 <button class="header-btn" onclick="logout()">Выйти</button>
             </div>
 
-            <!-- Вкладки контента -->
             <div id="tab-chats" class="tab-content" style="flex:1; overflow-y:auto; display:flex; flex-direction:column;">
-                <div class="user-profile-card">
-                    <div class="avatar" id="my-avatar">М</div>
-                    <div class="chat-info">
-                        <div class="chat-name" id="my-name-display">Имя</div>
-                        <div class="chat-preview" id="my-id-display">id: ...</div>
-                    </div>
-                </div>
-                <div id="chats-list-container">
-                    <!-- Список активных диалогов -->
-                </div>
+                <div id="chats-list-container"></div>
             </div>
 
-            <div id="tab-contacts" class="tab-content" style="flex:1; overflow-y:auto; display:none; padding: 10px;">
-                <h3 style="margin-bottom: 10px; font-size: 16px; color: #879ab0;">Контакты в системе</h3>
+            <div id="tab-contacts" class="tab-content" style="flex:1; overflow-y:auto; display:none;">
                 <div id="contacts-list-container"></div>
             </div>
 
             <div id="tab-settings" class="tab-content" style="flex:1; overflow-y:auto; display:none; padding: 20px;">
                 <h3>Настройки</h3>
-                <p style="color: #879ab0; margin-top: 10px;">Управление аккаунтом и безопасность.</p>
+                <p style="color: #879ab0; margin-top: 10px;">Аккаунт защищен.</p>
             </div>
 
             <div id="tab-profile" class="tab-content" style="flex:1; overflow-y:auto; display:none; padding: 20px; text-align: center;">
-                <div class="avatar" style="width: 80px; height: 80px; margin: 0 auto 15px; font-size: 32px;" id="profile-big-avatar">М</div>
+                <div class="avatar" style="width: 80px; height: 80px; margin: 0 auto 15px; font-size: 32px;" id="profile-avatar">U</div>
                 <h2 id="profile-name">Имя</h2>
-                <p style="color: #879ab0; margin-top: 5px;" id="profile-phone">+7 ...</p>
+                <p style="color: #879ab0; margin-top: 5px;" id="profile-phone">+7...</p>
             </div>
 
-            <button class="fab" onclick="openAddModal()">+</button>
-
-            <!-- Нижнее меню (как на вашем скриншоте) -->
             <div class="bottom-nav">
                 <button class="nav-item active" onclick="switchTab('chats', this)">
                     <span>💬</span><span>Чаты</span>
@@ -156,59 +116,42 @@
             </div>
         </div>
 
-        <!-- ОКНО ЧАТА С КОНКРЕТНЫМ ПОЛЬЗОВАТЕЛЕМ -->
+        <!-- ОКНО ЧАТА -->
         <div id="chat-screen" class="chat-screen">
             <div class="header">
-                <button class="header-btn" onclick="closeChat()">← Назад</button>
-                <span class="header-title" id="active-chat-name">Имя чата</span>
-                <div style="width: 40px;"></div>
+                <button class="header-btn" onclick="closeChat()">Назад</button>
+                <span class="header-title" id="active-chat-name">Чат</span>
+                <div style="width: 30px;"></div>
             </div>
             <div class="chat-messages" id="chat-messages-container"></div>
-            
             <div class="chat-input-bar">
-                <button class="action-btn" onclick="sendVideoNote()">⭕</button>
-                <button class="action-btn" onclick="sendVoice()">🎤</button>
                 <input type="text" id="message-input" placeholder="Сообщение..." onkeypress="handleKeyPress(event)">
                 <button class="action-btn" onclick="sendMessage()" style="color: #5288c1;">➤</button>
-            </div>
-        </div>
-
-        <!-- МОДАЛЬНОЕ ОКНО ДОБАВЛЕНИЯ ПО ID / ЮЗЕРНЕЙМУ -->
-        <div class="modal" id="add-modal">
-            <div class="modal-content">
-                <h3 style="margin-bottom: 12px;">Добавить чат</h3>
-                <input type="text" id="add-identifier" class="input-field" placeholder="Введите @username или ID">
-                <div class="modal-buttons">
-                    <button class="header-btn" onclick="closeAddModal()">Отмена</button>
-                    <button class="btn-primary" style="width: auto; padding: 8px 16px;" onclick="addByTelegram()">Найти</button>
-                </div>
             </div>
         </div>
     </div>
 
     <script>
-        const API_URL = ""; // Если фронтенд на том же сервере, оставляем пустым
         let currentUser = null;
         let activePeerId = null;
 
-        // Авто-логин при старте
         window.onload = async () => {
             try {
-                let res = await fetch(`${API_URL}/api/auto-login`);
+                let res = await fetch(`/api/auto-login`);
                 let data = await res.json();
                 if (data.status === "ok") {
                     currentUser = data.user;
                     showMainScreen();
                 }
-            } catch (e) { console.log("Не удалось выполнить авто-логин"); }
+            } catch (e) {}
         };
 
         async function requestAuth() {
             let phone = document.getElementById("phone-input").value;
             let nickname = document.getElementById("nick-input").value;
-            if(!phone || !nickname) return alert("Заполните все поля!");
+            if(!phone || !nickname) return alert("Заполните поля!");
 
-            let res = await fetch(`${API_URL}/api/request-code`, {
+            let res = await fetch(`/api/request-code`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({ phone, nickname })
@@ -228,7 +171,7 @@
             let nickname = document.getElementById("nick-input").value;
             let code = document.getElementById("code-input").value;
 
-            let res = await fetch(`${API_URL}/api/verify-code`, {
+            let res = await fetch(`/api/verify-code`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({ phone, nickname, code })
@@ -247,19 +190,15 @@
             document.getElementById("code-screen").classList.remove("active");
             document.getElementById("main-screen").classList.add("active");
 
-            document.getElementById("my-name-display").innerText = currentUser.name;
-            document.getElementById("my-id-display").innerText = "peer_id: " + currentUser.peer_id;
-            document.getElementById("my-avatar").innerText = currentUser.name[0].toUpperCase();
-            
             document.getElementById("profile-name").innerText = currentUser.name;
             document.getElementById("profile-phone").innerText = currentUser.phone;
-            document.getElementById("profile-big-avatar").innerText = currentUser.name[0].toUpperCase();
+            document.getElementById("profile-avatar").innerText = currentUser.name[0].toUpperCase();
 
             loadUsers();
         }
 
         async function loadUsers() {
-            let res = await fetch(`${API_URL}/api/users`);
+            let res = await fetch(`/api/users`);
             let data = await res.json();
             
             let chatsHtml = "";
@@ -272,7 +211,7 @@
                             <div class="avatar">${u.name[0].toUpperCase()}</div>
                             <div class="chat-info">
                                 <div class="chat-name">${u.name}</div>
-                                <div class="chat-preview">Нажмите, чтобы открыть диалог</div>
+                                <div class="chat-preview">Диалог</div>
                             </div>
                         </div>`;
                     contactsHtml += `
@@ -286,7 +225,7 @@
                 }
             });
             document.getElementById("chats-list-container").innerHTML = chatsHtml || '<p style="padding:20px; color:#879ab0; text-align:center;">Нет чатов</p>';
-            document.getElementById("contacts-list-container").innerHTML = contactsHtml || '<p style="padding:20px; color:#879ab0; text-align:center;">Контактов нет</p>';
+            document.getElementById("contacts-list-container").innerHTML = contactsHtml || '<p style="padding:20px; color:#879ab0; text-align:center;">Нет контактов</p>';
         }
 
         function switchTab(tabName, btn) {
@@ -316,24 +255,14 @@
 
         async function loadMessages() {
             if(!activePeerId) return;
-            let res = await fetch(`${API_URL}/api/get-messages/${currentUser.peer_id}/${activePeerId}`);
+            let res = await fetch(`/api/get-messages/${currentUser.peer_id}/${activePeerId}`);
             let data = await res.json();
             
             let html = "";
             data.messages.forEach(m => {
                 let isOut = m.sender_id === currentUser.peer_id;
                 let time = new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                
-                let contentHtml = "";
-                if(m.type === "video_note") {
-                    contentHtml = `<div class="video-note-bubble"><video src="${m.content}" autoplay loop muted></video></div>`;
-                } else if(m.type === "voice") {
-                    contentHtml = `🎤 Голосовое сообщение`;
-                } else {
-                    contentHtml = m.content;
-                }
-
-                html += `<div class="message ${isOut ? 'outgoing' : 'incoming'}">${contentHtml}<span class="message-time">${time}</span></div>`;
+                html += `<div class="message ${isOut ? 'outgoing' : 'incoming'}">${m.content}<span class="message-time">${time}</span></div>`;
             });
             let container = document.getElementById("chat-messages-container");
             container.innerHTML = html;
@@ -345,7 +274,7 @@
             let text = input.value.trim();
             if(!text || !activePeerId) return;
 
-            await fetch(`${API_URL}/api/save-message`, {
+            await fetch(`/api/save-message`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({
@@ -359,66 +288,12 @@
             loadMessages();
         }
 
-        async function sendVideoNote() {
-            // Демо-отправка видео-кружочка
-            let videoUrl = prompt("Введите ссылку на видео для кружочка (mp4):", "https://www.w3schools.com/html/mov_bbb.mp4");
-            if(!videoUrl || !activePeerId) return;
-
-            await fetch(`${API_URL}/api/save-message`, {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                    sender_id: currentUser.peer_id,
-                    receiver_id: activePeerId,
-                    msg_type: "video_note",
-                    content: videoUrl
-                })
-            });
-            loadMessages();
-        }
-
-        async function sendVoice() {
-            if(!activePeerId) return;
-            await fetch(`${API_URL}/api/save-message`, {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                    sender_id: currentUser.peer_id,
-                    receiver_id: activePeerId,
-                    msg_type: "voice",
-                    content: "Голосовое сообщение (0:05)"
-                })
-            });
-            loadMessages();
-        }
-
         function handleKeyPress(e) {
             if(e.key === 'Enter') sendMessage();
         }
 
-        function openAddModal() { document.getElementById("add-modal").style.display = "flex"; }
-        function closeAddModal() { document.getElementById("add-modal").style.display = "none"; }
-
-        async function addByTelegram() {
-            let identifier = document.getElementById("add-identifier").value;
-            if(!identifier) return;
-
-            let res = await fetch(`${API_URL}/api/add-by-telegram`, {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({ identifier })
-            });
-            let data = await res.json();
-            if(res.ok) {
-                closeAddModal();
-                openChat(data.user.peer_id, data.user.name);
-            } else {
-                alert(data.detail);
-            }
-        }
-
         async function logout() {
-            await fetch(`${API_URL}/api/logout`, { method: "POST" });
+            await fetch(`/api/logout`, { method: "POST" });
             location.reload();
         }
     </script>
