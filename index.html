@@ -9,7 +9,6 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', Roboto, sans-serif; background: #0a0e14; color: #e0e0e0; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 10px; }
         .app { max-width: 420px; width: 100%; background: #141a24; border-radius: 28px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.7); height: 92vh; display: flex; flex-direction: column; }
-        /* AUTH */
         .auth-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 30px; gap: 14px; background: linear-gradient(145deg, #0e141e, #1a2230); }
         .auth-screen .logo { font-size: 3.5rem; color: #6faaff; }
         .auth-screen h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: 2px; color: #6faaff; }
@@ -21,8 +20,6 @@
         .auth-screen .toggle-auth { color: #8abaff; cursor: pointer; font-size: 0.9rem; }
         .auth-screen .toggle-auth:hover { text-decoration: underline; }
         .auth-screen .clan-tag { font-size: 0.8rem; color: #5a7a8a; margin-top: 10px; }
-
-        /* CHAT */
         .chat-screen { display: none; flex-direction: column; height: 100%; }
         .chat-header { padding: 14px 18px; background: #1a2230; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2a3a4a; }
         .chat-header .user { display: flex; align-items: center; gap: 10px; }
@@ -33,13 +30,11 @@
         .chat-header .actions { display: flex; gap: 14px; }
         .chat-header .actions i { font-size: 1.2rem; cursor: pointer; color: #8ab0d0; transition: 0.2s; }
         .chat-header .actions i:hover { color: #6faaff; }
-
         .messages { flex: 1; padding: 14px 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; background: #0e141e; }
         .msg { max-width: 82%; padding: 9px 14px; border-radius: 18px; font-size: 0.9rem; word-break: break-word; animation: fadeIn 0.25s; }
         .msg.self { align-self: flex-end; background: #6faaff; color: #0a0e14; border-bottom-right-radius: 4px; }
         .msg.other { align-self: flex-start; background: #1e2836; border-bottom-left-radius: 4px; }
         .msg .time { font-size: 0.55rem; opacity: 0.5; display: block; margin-top: 3px; text-align: right; }
-        .msg .file-icon { font-size: 2rem; display: block; }
         .msg .voice { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .msg .voice audio { height: 30px; max-width: 160px; }
         .msg .video-preview { max-width: 160px; border-radius: 12px; margin-top: 4px; }
@@ -47,7 +42,6 @@
         .msg .call-info i { font-size: 1.2rem; }
         .msg.system { text-align: center; align-self: center; background: transparent; font-size: 0.7rem; opacity: 0.4; max-width: 90%; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-
         .input-area { display: flex; gap: 6px; padding: 8px 12px 12px; background: #141a24; border-top: 1px solid #2a3a4a; align-items: center; flex-wrap: wrap; }
         .input-area input { flex: 1; padding: 10px 16px; border-radius: 40px; border: 1px solid #2a3a4a; background: #1e2836; color: #fff; outline: none; font-size: 0.9rem; min-width: 80px; }
         .input-area input:focus { border-color: #6faaff; }
@@ -58,8 +52,6 @@
         .recording-indicator { display: none; color: #ff6b6b; font-size: 0.75rem; align-items: center; gap: 6px; padding: 4px 12px; background: #2a1a1a; border-radius: 40px; }
         .recording-indicator .dot { width: 10px; height: 10px; background: #ff3b3b; border-radius: 50%; animation: pulse 0.6s infinite alternate; }
         @keyframes pulse { from { opacity: 0.3; transform: scale(0.8); } to { opacity: 1; transform: scale(1.2); } }
-
-        /* CALL MODAL */
         .call-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 999; justify-content: center; align-items: center; flex-direction: column; gap: 16px; }
         .call-modal.active { display: flex; }
         .call-modal .caller-name { font-size: 1.4rem; font-weight: 600; color: #fff; }
@@ -71,14 +63,12 @@
         .call-modal .call-actions .mute { background: #2a3a4a; color: #fff; }
         .call-modal .call-actions .mute:hover { transform: scale(1.1); }
         .call-modal .call-actions .mute.muted { background: #ff3b3b; }
-
         @media (max-width: 480px) { .app { height: 96vh; border-radius: 16px; } .call-modal video { width: 90%; } }
     </style>
 </head>
 <body>
 
 <div class="app" id="app">
-    <!-- AUTH -->
     <div class="auth-screen" id="authScreen">
         <div class="logo"><i class="fas fa-shield-halved"></i></div>
         <h1>ClanChat</h1>
@@ -90,7 +80,6 @@
         <div class="clan-tag">⚔️ только свои</div>
     </div>
 
-    <!-- CHAT -->
     <div class="chat-screen" id="chatScreen">
         <div class="chat-header">
             <div class="user">
@@ -123,7 +112,6 @@
     </div>
 </div>
 
-<!-- CALL MODAL -->
 <div class="call-modal" id="callModal">
     <div class="caller-name" id="callerName">Звонок...</div>
     <video id="remoteVideo" autoplay playsinline></video>
@@ -137,7 +125,6 @@
 <script src="https://unpkg.com/peerjs@1.5.1/dist/peerjs.min.js"></script>
 <script>
     (function() {
-        // === DOM ===
         const authScreen = document.getElementById('authScreen');
         const chatScreen = document.getElementById('chatScreen');
         const loginInput = document.getElementById('loginInput');
@@ -164,7 +151,6 @@
         const hangupBtn = document.getElementById('hangupBtn');
         const callerName = document.getElementById('callerName');
 
-        // === STATE ===
         let currentUser = null;
         let isRegister = false;
         let peer = null;
@@ -175,34 +161,18 @@
         let audioChunks = [];
         let isRecording = false;
         let contacts = [];
-        let activeContact = null; // для упрощения — все сообщения в общий чат
 
-        // === FAKE DB (localStorage) ===
-        function getUsers() {
-            return JSON.parse(localStorage.getItem('clanchat_users') || '{}');
-        }
-        function saveUsers(users) {
-            localStorage.setItem('clanchat_users', JSON.stringify(users));
-        }
-        function getMessages() {
-            return JSON.parse(localStorage.getItem('clanchat_messages') || '[]');
-        }
-        function saveMessages(msgs) {
-            localStorage.setItem('clanchat_messages', JSON.stringify(msgs));
-        }
-        function getContacts() {
-            return JSON.parse(localStorage.getItem('clanchat_contacts') || '[]');
-        }
-        function saveContacts(c) {
-            localStorage.setItem('clanchat_contacts', JSON.stringify(c));
-        }
+        function getUsers() { return JSON.parse(localStorage.getItem('clanchat_users') || '{}'); }
+        function saveUsers(users) { localStorage.setItem('clanchat_users', JSON.stringify(users)); }
+        function getMessages() { return JSON.parse(localStorage.getItem('clanchat_messages') || '[]'); }
+        function saveMessages(msgs) { localStorage.setItem('clanchat_messages', JSON.stringify(msgs)); }
+        function getContacts() { return JSON.parse(localStorage.getItem('clanchat_contacts') || '[]'); }
+        function saveContacts(c) { localStorage.setItem('clanchat_contacts', JSON.stringify(c)); }
 
-        // === AUTH ===
         function authUser() {
             const login = loginInput.value.trim();
             const pass = passInput.value.trim();
             if (!login || !pass) { alert('Введи логин и пароль'); return; }
-
             const users = getUsers();
             if (isRegister) {
                 if (users[login]) { alert('Такой ник уже занят'); return; }
@@ -214,12 +184,10 @@
                 authBtn.textContent = 'Войти в клан';
                 return;
             }
-
             if (!users[login] || users[login].password !== pass) {
                 alert('Неверный логин или пароль');
                 return;
             }
-
             currentUser = login;
             startChat();
         }
@@ -245,17 +213,14 @@
             document.title = 'ClanChat';
         }
 
-        // === PEERJS ===
         function initPeer() {
             peer = new Peer(currentUser, {
                 config: { 'iceServers': [{ urls: 'stun:stun.l.google.com:19302' }] }
             });
-
             peer.on('open', (id) => {
                 console.log('Peer открыт:', id);
                 addSystemMessage('🔗 Подключение установлено. Твой ID: ' + id);
             });
-
             peer.on('call', (call) => {
                 const isVideo = call.metadata && call.metadata.type === 'video';
                 navigator.mediaDevices.getUserMedia({ audio: true, video: isVideo })
@@ -274,7 +239,6 @@
                     })
                     .catch(() => { alert('Ошибка доступа к медиа'); });
             });
-
             peer.on('error', (err) => {
                 console.error('Peer error:', err);
                 if (err.type === 'peer-unavailable') {
@@ -283,13 +247,11 @@
             });
         }
 
-        // === MESSAGES ===
         function addMessage(text, sender, type = 'text', extra = null) {
             const msgs = getMessages();
             msgs.push({ text, sender, type, extra, time: Date.now() });
             saveMessages(msgs);
             renderMessage({ text, sender, type, extra, time: Date.now() });
-            // уведомление
             if (sender !== currentUser && Notification.permission === 'granted') {
                 new Notification('ClanChat: ' + sender, { body: text });
             }
@@ -329,19 +291,13 @@
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
 
-        // === SEND TEXT ===
         function sendText() {
             const text = msgInput.value.trim();
             if (!text) return;
             addMessage(text, currentUser);
             msgInput.value = '';
-            // Отправляем всем контактам (имитация, реально — через PeerJS)
-            contacts.forEach(contact => {
-                // В реальном проекте — отправка через WebSocket/Peer
-            });
         }
 
-        // === VOICE RECORDING ===
         function startVoiceRecording() {
             if (isRecording) return;
             navigator.mediaDevices.getUserMedia({ audio: true })
@@ -367,7 +323,6 @@
                 .catch(() => alert('Нет доступа к микрофону'));
         }
 
-        // === CIRCLE ===
         function startCircleRecording() {
             if (isRecording) return;
             navigator.mediaDevices.getUserMedia({ audio: true, video: { facingMode: 'user', width: { ideal: 240 }, height: { ideal: 240 } } })
@@ -395,7 +350,6 @@
                 .catch(() => alert('Нет доступа к камере'));
         }
 
-        // === CALLS ===
         function startCall(isVideo) {
             if (!peer) { alert('Подожди подключения...'); return; }
             const target = prompt('Введите ник собеседника:');
@@ -432,7 +386,6 @@
             muteBtn.classList.remove('muted');
         }
 
-        // === CONTACTS ===
         function addContact() {
             const name = prompt('Введите ник для добавления в контакты:');
             if (!name) return;
@@ -444,7 +397,6 @@
             addSystemMessage('➕ ' + name + ' добавлен в контакты');
         }
 
-        // === EVENTS ===
         authBtn.addEventListener('click', authUser);
         toggleAuth.addEventListener('click', () => {
             isRegister = !isRegister;
@@ -455,11 +407,9 @@
         msgInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendText(); });
         logoutBtn.addEventListener('click', logout);
         addContactBtn.addEventListener('click', addContact);
-
         voiceCallBtn.addEventListener('click', () => startCall(false));
         videoCallBtn.addEventListener('click', () => startCall(true));
         hangupBtn.addEventListener('click', endCall);
-
         muteBtn.addEventListener('click', () => {
             if (localStream) {
                 isMuted = !isMuted;
@@ -468,10 +418,8 @@
                 muteBtn.classList.toggle('muted');
             }
         });
-
         voiceMsgBtn.addEventListener('click', startVoiceRecording);
         circleBtn.addEventListener('click', startCircleRecording);
-
         attachBtn.addEventListener('click', () => {
             const input = document.createElement('input');
             input.type = 'file';
@@ -489,7 +437,6 @@
             input.click();
         });
 
-        // === INIT ===
         window.addEventListener('DOMContentLoaded', () => {
             const users = getUsers();
             if (!users['Аргум']) {
@@ -498,15 +445,12 @@
             }
             loginInput.value = 'Аргум';
             passInput.value = '123';
-
             if (Notification.permission === 'default') {
                 Notification.requestPermission();
             }
         });
 
-        // === ВСТРОЕННЫЙ ПОМОЩНИК ДЛЯ ЗВОНКОВ ===
         console.log('⚔️ ClanChat запущен. Твой ID: ' + (peer ? peer.id : 'ожидание...'));
-        console.log('Для звонка введите ник собеседника (он должен быть онлайн).');
     })();
 </script>
 </body>
