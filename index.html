@@ -2,138 +2,218 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Мессенджер</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Telegram Web</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #fff; height: 100vh; display: flex; overflow: hidden; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: #0f172a; color: #f8fafc; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
     .hidden { display: none !important; }
+
+    /* Окна авторизации */
+    .auth-overlay { position: fixed; inset: 0; background: #0f172a; z-index: 1000; display: flex; justify-content: center; align-items: center; padding: 20px; }
+    .auth-box { background: #1e293b; width: 100%; max-width: 360px; padding: 32px 24px; border-radius: 20px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
+    .auth-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; color: #fff; }
+    .auth-subtitle { font-size: 13px; color: #94a3b8; margin-bottom: 24px; line-height: 1.4; }
     
-    /* Модальное окно */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-    .auth-card { background: #1e293b; padding: 28px; border-radius: 16px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
-    .auth-card h2 { margin-bottom: 8px; font-size: 22px; }
-    .auth-card p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
-    .auth-input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 14px; outline: none; }
-    .auth-input:focus { border-color: #38bdf8; }
-    .btn { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #0284c7; color: white; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-block; }
-    .btn:hover { background: #0369a1; }
-    .btn-secondary { background: #334155; margin-top: 8px; }
-    .btn-secondary:hover { background: #475569; }
-    .code-box { display: flex; justify-content: center; gap: 8px; margin: 16px 0; }
-    .code-box input { width: 45px; height: 50px; text-align: center; font-size: 20px; font-weight: bold; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #fff; }
+    .select-country { width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 10px; color: #fff; font-size: 14px; outline: none; margin-bottom: 12px; cursor: pointer; }
+    .input-field { width: 100%; padding: 14px; background: #0f172a; border: 1px solid #334155; border-radius: 10px; color: #fff; font-size: 15px; outline: none; transition: 0.2s; margin-bottom: 12px; }
+    .input-field:focus { border-color: #38bdf8; }
 
-    /* Аккаунты */
-    .acc-item { background: #0f172a; border: 1px solid #334155; padding: 12px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
-    .acc-item:hover { border-color: #38bdf8; }
+    .btn-primary { width: 100%; padding: 14px; background: #8774e1; border: none; border-radius: 10px; color: white; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-block; }
+    .btn-primary:hover { background: #7360cd; }
+    .btn-link { background: transparent; color: #38bdf8; border: none; margin-top: 12px; font-size: 13px; cursor: pointer; }
 
-    /* Главный интерфейс */
-    .app-container { width: 100vw; height: 100vh; display: flex; }
-    .sidebar { width: 300px; border-right: 1px solid #1e293b; display: flex; flex-direction: column; background: #0f172a; }
-    .sidebar-header { padding: 16px; border-bottom: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center; }
+    .code-inputs { display: flex; justify-content: center; gap: 8px; margin: 20px 0; }
+    .code-inputs input { width: 48px; height: 54px; background: #0f172a; border: 1px solid #334155; border-radius: 10px; color: #fff; text-align: center; font-size: 22px; font-weight: bold; }
+    .code-inputs input:focus { border-color: #8774e1; outline: none; }
+
+    .account-item { background: #0f172a; border: 1px solid #334155; padding: 14px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; text-align: left; }
+    .account-item:hover { border-color: #8774e1; }
+
+    /* Главный Мессенджер (Интерфейс Telegram Web) */
+    .app-main { width: 100vw; height: 100vh; display: flex; background: #0f172a; overflow: hidden; }
+    
+    /* Список чатов */
+    .sidebar { width: 340px; background: #17212b; border-right: 1px solid #0e1621; display: flex; flex-direction: column; flex-shrink: 0; }
+    .sidebar-header { height: 60px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #0e1621; background: #17212b; }
+    .sidebar-header h3 { font-size: 16px; color: #fff; }
     .user-list { flex: 1; overflow-y: auto; }
-    .user-item { padding: 12px 16px; border-bottom: 1px solid #1e293b; cursor: pointer; transition: 0.2s; }
-    .user-item:hover, .user-item.active { background: #1e293b; }
-    .chat-area { flex: 1; display: flex; flex-direction: column; background: #020617; }
-    .chat-header { padding: 16px; background: #0f172a; border-bottom: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center; }
-    .messages-box { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-    .chat-input-area { padding: 16px; background: #0f172a; border-top: 1px solid #1e293b; display: flex; gap: 10px; align-items: center; }
+    .chat-item { padding: 12px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.03); transition: 0.15s; }
+    .chat-item:hover, .chat-item.active { background: #2b5278; }
+    .avatar { width: 44px; height: 44px; border-radius: 50%; background: #8774e1; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: #fff; flex-shrink: 0; }
+    .chat-info { flex: 1; min-width: 0; }
+    .chat-name { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+    .chat-sub { font-size: 12px; color: #7f91a4; }
+
+    /* Окно переписки */
+    .chat-window { flex: 1; display: flex; flex-direction: column; background: #0e1621; position: relative; }
+    .chat-header { height: 60px; padding: 0 16px; background: #17212b; border-bottom: 1px solid #0e1621; display: flex; align-items: center; gap: 12px; }
+    .back-btn { display: none; background: none; border: none; color: #8774e1; font-size: 20px; cursor: pointer; padding: 4px; }
     
-    .msg { max-width: 60%; padding: 10px 14px; border-radius: 12px; font-size: 14px; word-break: break-word; }
-    .msg.my { background: #0284c7; align-self: flex-end; border-bottom-right-radius: 2px; }
-    .msg.their { background: #1e293b; align-self: flex-start; border-bottom-left-radius: 2px; }
-    
-    .logout-btn { background: #ef4444; border: none; padding: 6px 12px; color: white; border-radius: 6px; cursor: pointer; font-size: 12px; }
+    .messages-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background-image: radial-gradient(#1e2c3a 1px, transparent 0); background-size: 20px 20px; }
+    .msg-bubble { max-width: 65%; padding: 8px 14px; border-radius: 12px; font-size: 14px; line-height: 1.4; word-break: break-word; position: relative; }
+    .msg-bubble.my { background: #2b5278; align-self: flex-end; border-bottom-right-radius: 2px; color: #fff; }
+    .msg-bubble.their { background: #182533; align-self: flex-start; border-bottom-left-radius: 2px; color: #fff; }
+    .msg-time { font-size: 10px; color: rgba(255,255,255,0.5); text-align: right; margin-top: 4px; }
+
+    .input-bar { padding: 12px 16px; background: #17212b; display: flex; gap: 10px; align-items: center; border-top: 1px solid #0e1621; }
+    .msg-input { flex: 1; background: #0e1621; border: none; padding: 12px 16px; border-radius: 20px; color: #fff; font-size: 14px; outline: none; }
+    .send-btn { background: #8774e1; border: none; width: 40px; height: 40px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; flex-shrink: 0; }
+
+    /* МОБИЛЬНАЯ АДАПТАЦИЯ (ТЕЛЕФОН) */
+    @media (max-width: 768px) {
+      .sidebar { width: 100vw; }
+      .chat-window { width: 100vw; position: absolute; inset: 0; transform: translateX(100%); transition: transform 0.25s ease-in-out; }
+      .chat-window.open { transform: translateX(0); }
+      .back-btn { display: block; }
+    }
   </style>
 </head>
 <body>
 
   <!-- АВТОРИЗАЦИЯ -->
-  <div id="authModal" class="modal-overlay">
-    <div class="auth-card">
+  <div id="authOverlay" class="auth-overlay">
+    <div class="auth-box">
       
-      <!-- ШАГ 1: Номер -->
+      <!-- Шаг 1: Ввод номера -->
       <div id="stepPhone">
-        <h2>Вход в Чат</h2>
-        <p>Введите ваш номер телефона</p>
-        <input type="tel" id="phoneInput" class="auth-input" placeholder="Номер (+7, +375, +86)">
-        <p style="font-size:11px; color:#64748b; margin-bottom:12px;">Поддерживаются: РФ/КЗ (+7), РБ (+375), Китай (+86)</p>
-        <button class="btn" onclick="checkPhone()">Продолжить</button>
-      </div>
-
-      <!-- ШАГ 2: Выбор или Создание Аккаунта -->
-      <div id="stepAccounts" class="hidden">
-        <h2>Выбор Аккаунта</h2>
-        <p id="accPhoneTitle"></p>
-        <div id="accountsList"></div>
-        <button id="newAccBtn" class="btn btn-secondary" onclick="showNewAccountForm()">+ Создать новый аккаунт</button>
-      </div>
-
-      <!-- ШАГ 3: Имя для Нового Аккаунта -->
-      <div id="stepNick" class="hidden">
-        <h2>Новый Аккаунт</h2>
-        <p>Укажите ваш Никнейм</p>
-        <input type="text" id="nickInput" class="auth-input" placeholder="Никнейм">
-        <button class="btn" onclick="requestCode()">Далее</button>
-        <button class="btn btn-secondary" onclick="backToAccounts()">Назад</button>
-      </div>
-
-      <!-- ШАГ 4: Код из Телеграм Бота -->
-      <div id="stepCode" class="hidden">
-        <h2>Подтверждение</h2>
-        <p>Нажмите <b>START</b> в боте и введите полученный код:</p>
-        <a id="tgBotBtn" class="btn" style="margin-bottom: 12px;" target="_blank">Открыть Telegram-бота</a>
+        <div class="auth-title">Ваш телефон</div>
+        <div class="auth-subtitle">Выберите страну и введите ваш номер для входа</div>
         
-        <div class="code-box">
+        <select id="countrySelect" class="select-country" onchange="onCountryChange()">
+          <option value="+7">🇷🇺 / 🇰🇿 Россия / Казахстан (+7)</option>
+          <option value="+375">🇧🇾 Беларусь (+375)</option>
+          <option value="+86">🇨🇳 Китай (+86)</option>
+        </select>
+
+        <input type="tel" id="phoneInput" class="input-field" placeholder="+7 999 000 00 00" oninput="formatPhoneInput(this)">
+        <button class="btn-primary" onclick="submitPhone()">Далее</button>
+      </div>
+
+      <!-- Шаг 2: Выбор существующего аккаунта -->
+      <div id="stepAccounts" class="hidden">
+        <div class="auth-title">Аккаунты</div>
+        <div class="auth-subtitle" id="accPhoneTitle"></div>
+        <div id="accountsContainer"></div>
+        <button id="addAccBtn" class="btn-primary" style="background:#334155; margin-top:8px;" onclick="goToNewAccount()">+ Создать новый аккаунт</button>
+      </div>
+
+      <!-- Шаг 3: Ввод никнейма -->
+      <div id="stepNick" class="hidden">
+        <div class="auth-title">Имя аккаунта</div>
+        <div class="auth-subtitle">Укажите никнейм для регистрации</div>
+        <input type="text" id="nickInput" class="input-field" placeholder="Ваш никнейм">
+        <button class="btn-primary" onclick="submitNick()">Продолжить</button>
+        <button class="btn-link" onclick="backToAccounts()">Назад</button>
+      </div>
+
+      <!-- Шаг 4: Код подтверждения -->
+      <div id="stepCode" class="hidden">
+        <div class="auth-title">Подтверждение</div>
+        <div class="auth-subtitle">Перейдите в Telegram-бота, нажмите <b>START</b> и введите код:</div>
+        
+        <a id="tgBotLink" class="btn-primary" style="margin-bottom:12px;" target="_blank">Открыть Telegram Бота</a>
+
+        <div class="code-inputs">
           <input type="text" id="c1" maxlength="1" oninput="moveFocus(this, 'c2')">
           <input type="text" id="c2" maxlength="1" oninput="moveFocus(this, 'c3')">
           <input type="text" id="c3" maxlength="1" oninput="moveFocus(this, 'c4')">
           <input type="text" id="c4" maxlength="1">
         </div>
 
-        <button class="btn" onclick="verifyCode()">Войти в Чат</button>
+        <button class="btn-primary" onclick="verifyCode()">Войти</button>
       </div>
 
     </div>
   </div>
 
-  <!-- ЧАТ -->
-  <div class="app-container">
+  <!-- МЕССЕНДЖЕР -->
+  <div class="app-main">
+    
+    <!-- СПИСОК ЧАТОВ -->
     <div class="sidebar">
       <div class="sidebar-header">
         <div>
-          <h3 id="myNickDisplay">Чат</h3>
-          <span id="myPeerDisplay" style="font-size: 11px; color: #38bdf8;">ID: -</span>
+          <h3 id="myNickHeader">Чаты</h3>
+          <span id="myPeerHeader" style="font-size:11px; color:#38bdf8;"></span>
         </div>
-        <button class="logout-btn" onclick="logout()">Выйти</button>
+        <button style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:12px;" onclick="logout()">Выйти</button>
       </div>
-      <div class="user-list" id="usersList"></div>
+
+      <div class="user-list" id="usersList">
+        <!-- Список чатов загружается сюда -->
+      </div>
     </div>
 
-    <div class="chat-area">
+    <!-- ОКНО ЧАТА -->
+    <div id="chatWindow" class="chat-window">
       <div class="chat-header">
-        <h4 id="chatWithTitle">Выберите пользователя для общения</h4>
+        <button class="back-btn" onclick="closeMobileChat()">←</button>
+        <div class="avatar" id="chatAvatar">?</div>
+        <div>
+          <div class="chat-name" id="chatTitle">Выберите чат</div>
+          <div class="chat-sub" id="chatSubTitle">чтобы начать общение</div>
+        </div>
       </div>
 
-      <div class="messages-box" id="messagesBox">
-        <div style="text-align:center; color:#64748b; margin-top:40px;">Выберите собеседника из списка слева</div>
+      <div class="messages-area" id="messagesArea">
+        <div style="text-align:center; color:#7f91a4; margin-top:auto; margin-bottom:auto;">
+          Выберите собеседника из списка слева
+        </div>
       </div>
 
-      <div class="chat-input-area">
-        <input type="text" id="msgInput" class="auth-input" placeholder="Напишите сообщение..." style="margin:0;" onkeypress="handleKeyPress(event)">
-        <button class="btn" style="width: auto; padding: 12px 20px;" onclick="sendTextMessage()">Отправить</button>
+      <div class="input-bar">
+        <input type="text" id="msgInput" class="msg-input" placeholder="Написать сообщение..." onkeypress="if(event.key==='Enter') sendMessage()">
+        <button class="send-btn" onclick="sendMessage()">➔</button>
       </div>
     </div>
+
   </div>
 
   <script>
-    // ⚠️ ВАШ ТЕКУЩИЙ АДРЕС NGROK:
     const API_URL = "https://uncolored-enunciate-dial.ngrok-free.dev/api";
-    
+
     let currentUser = null;
-    let currentPhone = "";
+    let selectedPhone = "";
     let selectedNick = "";
     let activePeerId = null;
+
+    // --- Автопробелы и форматам телефонов ---
+    function onCountryChange() {
+      const code = document.getElementById('countrySelect').value;
+      const input = document.getElementById('phoneInput');
+      input.value = code + ' ';
+    }
+
+    function formatPhoneInput(input) {
+      let code = document.getElementById('countrySelect').value;
+      let val = input.value.replace(/\D/g, ''); // Только цифры
+
+      if (code === '+7') {
+        if (!val.startsWith('7')) val = '7' + val;
+        let formatted = '+7';
+        if (val.length > 1) formatted += ' ' + val.substring(1, 4);
+        if (val.length > 4) formatted += ' ' + val.substring(4, 7);
+        if (val.length > 7) formatted += ' ' + val.substring(7, 9);
+        if (val.length > 9) formatted += ' ' + val.substring(9, 11);
+        input.value = formatted;
+      } else if (code === '+375') {
+        if (!val.startsWith('375')) val = '375' + val;
+        let formatted = '+375';
+        if (val.length > 3) formatted += ' ' + val.substring(3, 5);
+        if (val.length > 5) formatted += ' ' + val.substring(5, 8);
+        if (val.length > 8) formatted += ' ' + val.substring(8, 10);
+        if (val.length > 10) formatted += ' ' + val.substring(10, 12);
+        input.value = formatted;
+      } else if (code === '+86') {
+        if (!val.startsWith('86')) val = '86' + val;
+        let formatted = '+86';
+        if (val.length > 2) formatted += ' ' + val.substring(2, 5);
+        if (val.length > 5) formatted += ' ' + val.substring(5, 9);
+        if (val.length > 9) formatted += ' ' + val.substring(9, 13);
+        input.value = formatted;
+      }
+    }
 
     function moveFocus(current, nextId) {
       if (current.value.length >= 1) {
@@ -142,68 +222,72 @@
     }
 
     async function checkAutoLogin() {
+      onCountryChange();
       try {
         const res = await fetch(`${API_URL}/auto-login`, {
           headers: { 'ngrok-skip-browser-warning': 'true' }
         });
         const data = await res.json();
         if (data.status === 'ok') {
-          setUserProfile(data.user);
+          initUserSession(data.user);
         }
       } catch (err) {}
     }
 
-    async function checkPhone() {
-      const phone = document.getElementById('phoneInput').value.trim();
-      if (!phone) return alert('Введите номер телефона!');
+    async function submitPhone() {
+      const rawPhone = document.getElementById('phoneInput').value;
+      if (rawPhone.length < 8) return alert('Введите корректный номер телефона!');
 
       try {
         const res = await fetch(`${API_URL}/check-phone`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-          body: JSON.stringify({ phone })
+          body: JSON.stringify({ phone: rawPhone })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail);
 
-        currentPhone = data.phone;
-        renderAccounts(data.accounts);
+        selectedPhone = data.phone;
 
+        if (data.accounts && data.accounts.length > 0) {
+          showAccountsList(data.accounts);
+        } else {
+          goToNewAccount();
+        }
       } catch (err) {
-        alert('Ошибка: ' + err.message);
+        alert(err.message);
       }
     }
 
-    function renderAccounts(accounts) {
+    function showAccountsList(accounts) {
       document.getElementById('stepPhone').classList.add('hidden');
       document.getElementById('stepAccounts').classList.remove('hidden');
-      document.getElementById('accPhoneTitle').innerText = `Номер: ${currentPhone}`;
+      document.getElementById('accPhoneTitle').innerText = selectedPhone;
 
-      const list = document.getElementById('accountsList');
-      list.innerHTML = '';
+      const container = document.getElementById('accountsContainer');
+      container.innerHTML = '';
 
       accounts.forEach(acc => {
-        const div = document.createElement('div');
-        div.className = 'acc-item';
-        div.innerHTML = `<div><b>${acc.name}</b></div><div style="font-size:12px; color:#38bdf8;">Войти →</div>`;
-        div.onclick = () => selectExistingAccount(acc.name);
-        list.appendChild(div);
+        const item = document.createElement('div');
+        item.className = 'account-item';
+        item.innerHTML = `<div><b>${acc.name}</b><br><span style="font-size:11px; color:#7f91a4;">ID: ${acc.peer_id}</span></div><span style="color:#8774e1; font-weight:bold;">Войти →</span>`;
+        item.onclick = () => {
+          selectedNick = acc.name;
+          requestCode();
+        };
+        container.appendChild(item);
       });
 
-      const newBtn = document.getElementById('newAccBtn');
+      const addBtn = document.getElementById('addAccBtn');
       if (accounts.length >= 2) {
-        newBtn.classList.add('hidden');
+        addBtn.classList.add('hidden');
       } else {
-        newBtn.classList.remove('hidden');
+        addBtn.classList.remove('hidden');
       }
     }
 
-    function selectExistingAccount(nick) {
-      selectedNick = nick;
-      requestCode();
-    }
-
-    function showNewAccountForm() {
+    function goToNewAccount() {
+      document.getElementById('stepPhone').classList.add('hidden');
       document.getElementById('stepAccounts').classList.add('hidden');
       document.getElementById('stepNick').classList.remove('hidden');
     }
@@ -213,59 +297,59 @@
       document.getElementById('stepAccounts').classList.remove('hidden');
     }
 
-    async function requestCode() {
-      if (!selectedNick) {
-        selectedNick = document.getElementById('nickInput').value.trim();
-      }
-      if (!selectedNick) return alert('Укажите никнейм!');
+    async function submitNick() {
+      selectedNick = document.getElementById('nickInput').value.trim();
+      if (!selectedNick) return alert('Введите никнейм!');
+      requestCode();
+    }
 
+    async function requestCode() {
       try {
         const res = await fetch(`${API_URL}/request-code`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-          body: JSON.stringify({ phone: currentPhone, nickname: selectedNick })
+          body: JSON.stringify({ phone: selectedPhone, nickname: selectedNick })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail);
 
-        document.getElementById('tgBotBtn').href = data.bot_link;
+        document.getElementById('tgBotLink').href = data.bot_link;
         document.getElementById('stepAccounts').classList.add('hidden');
         document.getElementById('stepNick').classList.add('hidden');
         document.getElementById('stepCode').classList.remove('hidden');
-
       } catch (err) {
-        alert('Ошибка: ' + err.message);
+        alert(err.message);
       }
     }
 
     async function verifyCode() {
       const code = document.getElementById('c1').value + document.getElementById('c2').value + document.getElementById('c3').value + document.getElementById('c4').value;
-      if (code.length < 4) return alert('Введите 4-значный код полностью!');
+      if (code.length < 4) return alert('Введите 4-значный код!');
 
       try {
         const res = await fetch(`${API_URL}/verify-code`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-          body: JSON.stringify({ phone: currentPhone, nickname: selectedNick, code })
+          body: JSON.stringify({ phone: selectedPhone, nickname: selectedNick, code })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail);
 
-        setUserProfile(data.user);
-
+        initUserSession(data.user);
       } catch (err) {
-        alert('Ошибка: ' + err.message);
+        alert(err.message);
       }
     }
 
-    function setUserProfile(user) {
+    function initUserSession(user) {
       currentUser = user;
-      document.getElementById('authModal').classList.add('hidden');
-      document.getElementById('myNickDisplay').innerText = user.name;
-      document.getElementById('myPeerDisplay').innerText = `ID: ${user.peer_id}`;
+      document.getElementById('authOverlay').classList.add('hidden');
+      document.getElementById('myNickHeader').innerText = user.name;
+      document.getElementById('myPeerHeader').innerText = `ID: ${user.peer_id}`;
+
       loadUsers();
-      setInterval(loadUsers, 5000);
-      setInterval(loadMessages, 2000);
+      setInterval(loadUsers, 4000);
+      setInterval(loadMessages, 1500);
     }
 
     async function loadUsers() {
@@ -277,23 +361,40 @@
 
         data.users.forEach(u => {
           if (currentUser && u.peer_id === currentUser.peer_id) return;
-          const div = document.createElement('div');
-          div.className = `user-item ${activePeerId === u.peer_id ? 'active' : ''}`;
-          div.innerHTML = `<b>${u.name}</b><div style="font-size:11px; color:#64748b;">ID: ${u.peer_id}</div>`;
-          div.onclick = () => selectUserChat(u);
-          list.appendChild(div);
+
+          const item = document.createElement('div');
+          item.className = `chat-item ${activePeerId === u.peer_id ? 'active' : ''}`;
+          item.innerHTML = `
+            <div class="avatar">${u.name.charAt(0).toUpperCase()}</div>
+            <div class="chat-info">
+              <div class="chat-name">${u.name}</div>
+              <div class="chat-sub">ID: ${u.peer_id}</div>
+            </div>
+          `;
+          item.onclick = () => openChat(u);
+          list.appendChild(item);
         });
       } catch (err) {}
     }
 
-    function selectUserChat(user) {
+    function openChat(user) {
       activePeerId = user.peer_id;
-      document.getElementById('chatWithTitle').innerText = `Чат с ${user.name} (ID: ${user.peer_id})`;
+      document.getElementById('chatTitle').innerText = user.name;
+      document.getElementById('chatSubTitle').innerText = `ID: ${user.peer_id}`;
+      document.getElementById('chatAvatar').innerText = user.name.charAt(0).toUpperCase();
+
+      // Мобильный сдвиг экрана
+      document.getElementById('chatWindow').classList.add('open');
+
       loadUsers();
       loadMessages();
     }
 
-    async function sendTextMessage() {
+    function closeMobileChat() {
+      document.getElementById('chatWindow').classList.remove('open');
+    }
+
+    async function sendMessage() {
       const text = document.getElementById('msgInput').value.trim();
       if (!activePeerId || !text) return;
 
@@ -320,23 +421,23 @@
       try {
         const res = await fetch(`${API_URL}/get-messages/${currentUser.peer_id}/${activePeerId}`);
         const data = await res.json();
-        
-        const box = document.getElementById('messagesBox');
-        box.innerHTML = '';
+
+        const area = document.getElementById('messagesArea');
+        area.innerHTML = '';
 
         data.messages.forEach(m => {
-          const div = document.createElement('div');
-          div.className = `msg ${m.sender_id === currentUser.peer_id ? 'my' : 'their'}`;
-          div.innerText = m.content;
-          box.appendChild(div);
+          const bubble = document.createElement('div');
+          bubble.className = `msg-bubble ${m.sender_id === currentUser.peer_id ? 'my' : 'their'}`;
+          
+          const date = new Date(m.timestamp);
+          const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+          bubble.innerHTML = `${m.content}<div class="msg-time">${timeStr}</div>`;
+          area.appendChild(bubble);
         });
 
-        box.scrollTop = box.scrollHeight;
+        area.scrollTop = area.scrollHeight;
       } catch (err) {}
-    }
-
-    function handleKeyPress(e) {
-      if (e.key === 'Enter') sendTextMessage();
     }
 
     async function logout() {
