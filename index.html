@@ -3,482 +3,199 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Family Connect</title>
-  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <title>Анонимный Чат</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    body { background: #0e1621; color: #fff; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
-
-    .auth-overlay { position: fixed; inset: 0; background: rgba(14,22,33,0.95); backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-    .auth-card { background: #17212b; padding: 35px 30px; border-radius: 16px; width: 360px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
-    .auth-card .logo { font-size: 50px; margin-bottom: 10px; display: inline-block; }
-    .auth-card h2 { margin-bottom: 8px; font-size: 22px; }
-    .auth-card p { font-size: 13px; color: #7f91a4; margin-bottom: 20px; line-height: 1.4; }
-
-    .input-field { width: 100%; padding: 12px; background: #242f3d; border: 1px solid transparent; border-radius: 10px; color: #fff; outline: none; margin-bottom: 12px; font-size: 14px; }
-    .input-field:focus { border-color: #64b5f6; }
-
-    .btn { background: #2b5278; border: none; padding: 12px 18px; border-radius: 10px; color: #fff; font-weight: bold; cursor: pointer; transition: 0.2s; width: 100%; display: inline-block; text-decoration: none; text-align: center; }
-    .btn:hover { background: #366593; }
-
-    .code-box { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; }
-    .code-input { width: 45px; height: 50px; text-align: center; font-size: 20px; font-weight: bold; background: #242f3d; border: 1px solid transparent; border-radius: 8px; color: #64b5f6; outline: none; }
-
-    .app-container { width: 95%; max-width: 1100px; height: 90vh; background: #17212b; border-radius: 16px; display: flex; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-    .sidebar { width: 320px; background: #17212b; border-right: 1px solid #0e1621; display: flex; flex-direction: column; }
-    
-    .profile-badge { padding: 15px; background: #242f3d; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #10171e; }
-    .profile-info { display: flex; align-items: center; gap: 12px; }
-    .my-avatar { width: 44px; height: 44px; border-radius: 50%; background: #64b5f6; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 18px; }
-
-    .connect-box { padding: 15px; border-bottom: 1px solid #0e1621; }
-
-    .chat-main { flex: 1; display: flex; flex-direction: column; background: #0e1621; position: relative; }
-    .chat-header { height: 60px; background: #17212b; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #0e1621; }
-    
-    .call-btns { display: flex; gap: 10px; }
-    .icon-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: #7f91a4; transition: 0.2s; }
-    .icon-btn:hover { color: #64b5f6; }
-
-    .messages-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-
-    .msg { max-width: 65%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.4; word-break: break-word; position: relative; animation: popIn 0.2s forwards; }
-    .msg.in { background: #182533; align-self: flex-start; border-bottom-left-radius: 4px; }
-    .msg.out { background: #2b5278; align-self: flex-end; border-bottom-right-radius: 4px; }
-    .msg-time { font-size: 10px; color: rgba(255,255,255,0.5); float: right; margin-top: 6px; margin-left: 10px; }
-
-    .circle-video { width: 160px; height: 160px; border-radius: 50%; object-fit: cover; border: 2px solid #64b5f6; }
-    
-    .input-area { padding: 12px 16px; background: #17212b; display: flex; align-items: center; gap: 10px; position: relative; }
-    .input-area input { flex: 1; background: #242f3d; border: none; padding: 12px; border-radius: 10px; color: #fff; outline: none; }
-
-    .emoji-picker { 
-      position: absolute; bottom: 65px; left: 15px; 
-      background: #17212b; border: 1px solid #242f3d; 
-      padding: 12px; border-radius: 14px; 
-      width: 320px; height: 220px; overflow-y: auto;
-      display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; 
-      font-size: 22px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); 
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
     }
-    .emoji-picker span { cursor: pointer; text-align: center; padding: 4px; border-radius: 6px; transition: 0.1s; }
-    .emoji-picker span:hover { background: #242f3d; transform: scale(1.2); }
-    .hidden { display: none !important; }
-
-    /* АДМИН ПАНЕЛЬ STYLES */
-    .admin-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 2000; display: flex; justify-content: center; align-items: center; }
-    .admin-box { background: #17212b; padding: 25px; border-radius: 16px; width: 600px; max-height: 80vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); }
-    .user-table { width: 100%; border-collapse: collapse; margin-top: 15px; text-align: left; font-size: 13px; }
-    .user-table th, .user-table td { padding: 10px; border-bottom: 1px solid #242f3d; }
-    .user-table th { color: #7f91a4; }
-    .del-btn { background: #e53935; border: none; padding: 4px 8px; color: #fff; border-radius: 6px; cursor: pointer; }
-
-    .call-overlay { position: absolute; inset: 0; background: rgba(14,22,33,0.95); z-index: 500; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; }
-    .video-grid { display: flex; gap: 20px; }
-    .video-grid video { width: 280px; height: 210px; background: #000; border-radius: 12px; object-fit: cover; }
-
-    @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    .modal {
+      background: #1e293b;
+      padding: 24px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      text-align: center;
+    }
+    .hidden { display: none; }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: #fff;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    button, .btn-link {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: none;
+      background: #0284c7;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      box-sizing: border-box;
+    }
+    button:hover, .btn-link:hover { background: #0369a1; }
+    .code-inputs {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 16px 0;
+    }
+    .code-inputs input {
+      width: 50px;
+      height: 50px;
+      text-align: center;
+      font-size: 20px;
+      margin: 0;
+    }
+    .hint {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Окно Авторизации -->
-  <div class="auth-overlay" id="authModal">
-    <div class="auth-card">
-      <div class="logo">💬</div>
+  <div id="authModal" class="modal">
+    <!-- ШАГ 1: Ввод Ника и Номера -->
+    <div id="step1">
+      <h2>Авторизация</h2>
+      <input type="text" id="nickInput" placeholder="Ваш Никнейм">
+      <input type="tel" id="phoneInput" placeholder="Номер телефона (+7, +375, +86)">
+      <div class="hint">Поддерживаются: РФ/КЗ (+7), Беларусь (+375), Китай (+86)</div>
+      <button onclick="requestCode()">Далее</button>
+    </div>
 
-      <div id="step1">
-        <h2>Вход в мессенджер</h2>
-        <p>Укажите ваш Никнейм и Номер телефона.</p>
+    <!-- ШАГ 2: Переход в Бота и ввод Кода -->
+    <div id="step2" class="hidden">
+      <h2>Подтверждение</h2>
+      <p style="font-size:14px; color:#cbd5e1;">Перейдите в бота, нажмите START и введите полученный код ниже:</p>
+      
+      <a id="tgBotBtn" class="btn-link" target="_blank">Открыть Бота и получить код</a>
 
-        <input type="text" id="nickInput" class="input-field" placeholder="Ваш Никнейм (например, Alex)">
-        <input type="tel" id="phoneInput" class="input-field" placeholder="Номер телефона (+7...)">
-        
-        <button class="btn" onclick="requestCode()">Получить код</button>
+      <div class="code-inputs">
+        <input type="text" id="c1" maxlength="1" oninput="moveFocus(this, 'c2')">
+        <input type="text" id="c2" maxlength="1" oninput="moveFocus(this, 'c3')">
+        <input type="text" id="c3" maxlength="1" oninput="moveFocus(this, 'c4')">
+        <input type="text" id="c4" maxlength="1">
       </div>
 
-      <div id="step2" class="hidden">
-        <h2>Подтверждение</h2>
-        <p>Новое устройство/IP! Откройте бота для получения кода:</p>
-
-        <a id="tgBotBtn" href="#" target="_blank" class="btn" style="background: #0088cc; margin-bottom: 15px;">Открыть Бота и получить код</a>
-
-        <div class="code-box">
-          <input type="text" maxlength="1" class="code-input" id="c1" oninput="focusNext(this, 'c2')">
-          <input type="text" maxlength="1" class="code-input" id="c2" oninput="focusNext(this, 'c3')">
-          <input type="text" maxlength="1" class="code-input" id="c3" oninput="focusNext(this, 'c4')">
-          <input type="text" maxlength="1" class="code-input" id="c4" oninput="verifyCode()">
-        </div>
-
-        <button class="btn" onclick="verifyCode()">Войти в Чат</button>
-      </div>
+      <button onclick="verifyCode()">Войти в Чат</button>
     </div>
   </div>
 
-  <!-- АДМИН ПАНЕЛЬ МОДАЛКА -->
-  <div class="admin-modal hidden" id="adminModal">
-    <div class="admin-box">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h2>🛠 Админ Панель</h2>
-        <button class="del-btn" style="background: #7f91a4;" onclick="toggleAdminModal()">Закрыть</button>
-      </div>
-
-      <div id="adminLoginStep">
-        <p style="margin-bottom: 10px; font-size: 14px; color: #7f91a4;">Введите пароль администратора:</p>
-        <input type="password" id="adminPassInput" class="input-field" placeholder="Пароль...">
-        <button class="btn" onclick="loginAdmin()">Войти</button>
-      </div>
-
-      <div id="adminContentStep" class="hidden">
-        <div style="display: flex; gap: 20px; background: #242f3d; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
-          <div>Пользователей: <b id="statUsers">0</b></div>
-          <div>Сообщений: <b id="statMsgs">0</b></div>
-        </div>
-
-        <h3>Пользователи:</h3>
-        <table class="user-table">
-          <thead>
-            <tr>
-              <th>Ник</th>
-              <th>Тел</th>
-              <th>ID</th>
-              <th>IP адрес</th>
-              <th>Действие</th>
-            </tr>
-          </thead>
-          <tbody id="userTableBody"></tbody>
-        </table>
-      </div>
-    </div>
+  <div id="chatApp" class="hidden">
+    <h2>Чат успешно запущен!</h2>
+    <p id="userInfo"></p>
   </div>
 
-  <div class="app-container">
-    <div class="sidebar">
-      <div class="profile-badge">
-        <div class="profile-info">
-          <div class="my-avatar" id="myAvatar">?</div>
-          <div>
-            <div style="font-weight: bold;" id="myName">Гость</div>
-            <div style="font-size: 11px; color: #7f91a4;" id="myPhone">Тел: --</div>
-            <div style="font-size: 12px; color: #64b5f6; font-weight: bold; margin-top: 2px;" id="myIdBadge">ID: --</div>
-          </div>
-        </div>
-        <button class="icon-btn" title="Админка" onclick="toggleAdminModal()">⚙️</button>
-      </div>
+  <script>
+    // ⚠️ Убедись, что тут указан ТВОЙ ТЕКУЩИЙ NGROK АДРЕС:
+    const API_URL = "https://uncolored-enunciate-dial.ngrok-free.dev/api";
+    let currentFormattedPhone = "";
 
-      <div class="connect-box">
-        <p style="font-size: 11px; color: #7f91a4; margin-bottom: 8px;">ПОДКЛЮЧИТЬСЯ К СОБЕСЕДНИКУ:</p>
-        <input type="text" id="peerIdInput" class="input-field" placeholder="Введи ID собеседника">
-        <button class="btn" onclick="connectToPeer()">Подключиться</button>
-      </div>
-    </div>
-
-    <div class="chat-main">
-      <div class="chat-header">
-        <div>
-          <h3 id="chatTitle">Чат</h3>
-          <span style="font-size: 12px; color: #7f91a4;" id="statusText">офлайн</span>
-        </div>
-        <div class="call-btns">
-          <button class="icon-btn" title="Аудиозвонок" onclick="startCall(false)">📞</button>
-          <button class="icon-btn" title="Видеозвонок" onclick="startCall(true)">📹</button>
-        </div>
-      </div>
-
-      <div class="messages-container" id="messages"></div>
-
-      <div class="input-area">
-        <button class="icon-btn" onclick="toggleEmoji()">😊</button>
-        <input type="text" id="msgInput" placeholder="Написать сообщение..." onkeydown="if(event.key==='Enter') sendMessage()">
-        
-        <button class="icon-btn" id="voiceBtn" title="Голосовое сообщение" onclick="toggleRecord('audio')">🎙</button>
-        <button class="icon-btn" id="circleBtn" title="Видео-кружок" onclick="toggleRecord('video')">⭕</button>
-        
-        <button class="btn" style="width: auto;" onclick="sendMessage()">Отправить</button>
-
-        <div class="emoji-picker hidden" id="emojiPicker">
-          <span onclick="addEmoji('😊')">😊</span><span onclick="addEmoji('😂')">😂</span><span onclick="addEmoji('🤣')">🤣</span><span onclick="addEmoji('😍')">😍</span><span onclick="addEmoji('😎')">😎</span><span onclick="addEmoji('🥳')">🥳</span><span onclick="addEmoji('😇')">😇</span>
-          <span onclick="addEmoji('👍')">👍</span><span onclick="addEmoji('❤️')">❤️</span><span onclick="addEmoji('🔥')">🔥</span><span onclick="addEmoji('🎉')">🎉</span><span onclick="addEmoji('🚀')">🚀</span><span onclick="addEmoji('💯')">💯</span><span onclick="addEmoji('☕')">☕</span>
-        </div>
-      </div>
-
-      <div class="call-overlay hidden" id="callOverlay">
-        <h3>Звонок...</h3>
-        <div class="video-grid">
-          <video id="localVideo" autoplay muted></video>
-          <video id="remoteVideo" autoplay></video>
-        </div>
-        <button class="btn" style="background: #e53935; width: auto;" onclick="endCall()">Завершить звонок</button>
-      </div>
-    </div>
-  </div>
-
-<script>
-  const API_URL = "https://uncolored-enunciate-dial.ngrok-free.dev/api";
-  let currentUser = null;
-  let targetPeerId = null;
-  let peer = null, conn = null, mediaCall = null;
-  let mediaRecorder = null, recordedChunks = [];
-  let isRecording = false;
-
-  // ПРОВЕРКА IP ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
-  window.addEventListener('DOMContentLoaded', async () => {
-    try {
-      const res = await fetch(`${API_URL}/auto-login`, {
-        headers: { 'ngrok-skip-browser-warning': 'true' }
-      });
-      const data = await res.json();
-
-      if (data.status === 'ok') {
-        setUserProfile(data.user);
-        document.getElementById('authModal').style.display = 'none';
+    function moveFocus(current, nextId) {
+      if (current.value.length >= 1) {
+        document.getElementById(nextId).focus();
       }
-    } catch (e) { console.log("Не удалось выполнить авто-вход"); }
-  });
+    }
 
-  function setUserProfile(user) {
-    currentUser = user;
-    document.getElementById('myAvatar').innerText = currentUser.name[0].toUpperCase();
-    document.getElementById('myName').innerText = currentUser.name;
-    document.getElementById('myPhone').innerText = currentUser.phone;
-    document.getElementById('myIdBadge').innerText = `ID: ${currentUser.peer_id}`;
-    initPeer(currentUser.peer_id);
-  }
-
-  function focusNext(current, nextId) {
-    if (current.value.length === 1 && nextId) document.getElementById(nextId).focus();
-  }
-
-  async function requestCode() {
-    const nickname = document.getElementById('nickInput').value.trim();
-    const phone = document.getElementById('phoneInput').value.trim();
-    if (!nickname || !phone) return alert('Заполните все поля!');
-
-    try {
-      const res = await fetch(`${API_URL}/request-code`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-        body: JSON.stringify({ phone, nickname })
-      });
-      const data = await res.json();
-
-      document.getElementById('tgBotBtn').href = data.bot_link;
-      document.getElementById('step1').classList.add('hidden');
-      document.getElementById('step2').classList.remove('hidden');
-    } catch (err) { alert('Ошибка соединения!'); }
-  }
-
-  async function verifyCode() {
-    const phone = document.getElementById('phoneInput').value.trim();
-    const code = document.getElementById('c1').value + document.getElementById('c2').value + document.getElementById('c3').value + document.getElementById('c4').value;
-
-    try {
-      const res = await fetch(`${API_URL}/verify-code`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-        body: JSON.stringify({ phone, code })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail);
-
-      setUserProfile(data.user);
-      document.getElementById('authModal').style.display = 'none';
-    } catch (err) { alert('Ошибка: ' + err.message); }
-  }
-
-  // --- АДМИН ПАНЕЛЬ ЛОГИКА ---
-  function toggleAdminModal() {
-    document.getElementById('adminModal').classList.toggle('hidden');
-  }
-
-  async function loginAdmin() {
-    const password = document.getElementById('adminPassInput').value.trim();
-    try {
-      const res = await fetch(`${API_URL}/admin/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-        body: JSON.stringify({ password })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail);
-
-      document.getElementById('adminLoginStep').classList.add('hidden');
-      document.getElementById('adminContentStep').classList.remove('hidden');
-
-      document.getElementById('statUsers').innerText = data.stats.total_users;
-      document.getElementById('statMsgs').innerText = data.stats.total_messages;
-
-      const tbody = document.getElementById('userTableBody');
-      tbody.innerHTML = '';
-      data.users.forEach(u => {
-        tbody.innerHTML += `
-          <tr>
-            <td><b>${u.name}</b></td>
-            <td>${u.phone}</td>
-            <td>${u.peer_id}</td>
-            <td><code>${u.ip}</code></td>
-            <td><button class="del-btn" onclick="deleteUser('${u.phone}')">Удалить</button></td>
-          </tr>
-        `;
-      });
-    } catch (err) { alert(err.message); }
-  }
-
-  async function deleteUser(phone) {
-    if (!confirm(`Удалить пользователя ${phone}?`)) return;
-    await fetch(`${API_URL}/admin/delete-user/${phone}`, {
-      method: 'DELETE',
-      headers: { 'ngrok-skip-browser-warning': 'true' }
-    });
-    loginAdmin();
-  }
-
-  function initPeer(id) {
-    peer = new Peer(`family-app-net-${id}`);
-    peer.on('connection', (connection) => {
-      conn = connection;
-      targetPeerId = conn.peer.replace('family-app-net-', '');
-      setupChat();
-    });
-    peer.on('call', async (call) => {
-      if (confirm('Входящий звонок! Ответить?')) {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        document.getElementById('localVideo').srcObject = stream;
-        document.getElementById('callOverlay').classList.remove('hidden');
-        call.answer(stream);
-        mediaCall = call;
-        call.on('stream', (remoteStream) => {
-          document.getElementById('remoteVideo').srcObject = remoteStream;
-        });
-      }
-    });
-  }
-
-  async function connectToPeer() {
-    targetPeerId = document.getElementById('peerIdInput').value.trim();
-    if (!targetPeerId) return alert('Введи ID собеседника!');
-    conn = peer.connect(`family-app-net-${targetPeerId}`);
-    setupChat();
-  }
-
-  async function setupChat() {
-    conn.on('open', () => {
-      document.getElementById('statusText').innerText = 'в сети';
-      document.getElementById('statusText').style.color = '#64b5f6';
-      loadHistory();
-    });
-    conn.on('data', (data) => { addMessage(data, 'in'); });
-  }
-
-  async function loadHistory() {
-    if (!targetPeerId) return;
-    document.getElementById('messages').innerHTML = '';
-    const res = await fetch(`${API_URL}/get-messages/${currentUser.peer_id}/${targetPeerId}`, {
-      headers: { 'ngrok-skip-browser-warning': 'true' }
-    });
-    const data = await res.json();
-    data.messages.forEach(msg => {
-      const side = msg.sender_id === currentUser.peer_id ? 'out' : 'in';
-      addMessage({ type: msg.type, content: msg.content }, side, msg.timestamp);
-    });
-  }
-
-  async function saveMessageToDb(type, content) {
-    if (!targetPeerId) return;
-    await fetch(`${API_URL}/save-message`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' },
-      body: JSON.stringify({
-        sender_id: currentUser.peer_id,
-        receiver_id: targetPeerId,
-        msg_type: type,
-        content: content
-      })
-    });
-  }
-
-  function sendMessage() {
-    const input = document.getElementById('msgInput');
-    const text = input.value.trim();
-    if (!text || !conn) return;
-
-    conn.send({ type: 'text', content: text });
-    saveMessageToDb('text', text);
-    addMessage({ type: 'text', content: text }, 'out');
-    input.value = '';
-  }
-
-  function toggleEmoji() { document.getElementById('emojiPicker').classList.toggle('hidden'); }
-  function addEmoji(emoji) { document.getElementById('msgInput').value += emoji; toggleEmoji(); }
-
-  async function toggleRecord(mode) {
-    const btn = mode === 'audio' ? document.getElementById('voiceBtn') : document.getElementById('circleBtn');
-    if (!isRecording) {
+    // Авто-вход по IP
+    async function checkAutoLogin() {
       try {
-        const constraints = mode === 'audio' ? { audio: true } : { video: true, audio: true };
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        mediaRecorder = new MediaRecorder(stream);
-        recordedChunks = [];
-        mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(recordedChunks, { type: mode === 'audio' ? 'audio/webm' : 'video/webm' });
-          const reader = new FileReader();
-          reader.readAsDataURL(blob);
-          reader.onloadend = () => {
-            const base64data = reader.result;
-            conn.send({ type: mode, content: base64data });
-            saveMessageToDb(mode, base64data);
-            addMessage({ type: mode, content: base64data }, 'out');
-          };
-          stream.getTracks().forEach(track => track.stop());
-        };
-        mediaRecorder.start();
-        isRecording = true;
-        btn.style.color = '#e53935';
-      } catch (err) { alert('Нет доступа к оборудованию!'); }
-    } else {
-      mediaRecorder.stop();
-      isRecording = false;
-      btn.style.color = '#7f91a4';
-    }
-  }
-
-  function addMessage(data, side, customTime = null) {
-    const container = document.getElementById('messages');
-    const time = customTime ? new Date(customTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const msg = document.createElement('div');
-    msg.className = `msg ${side}`;
-
-    if (data.type === 'text') {
-      msg.innerHTML = `${data.content} <span class="msg-time">${time}</span>`;
-    } else if (data.type === 'audio') {
-      msg.innerHTML = `<audio controls src="${data.content}"></audio><span class="msg-time">${time}</span>`;
-    } else if (data.type === 'video') {
-      msg.innerHTML = `<video class="circle-video" autoplay loop muted src="${data.content}"></video><span class="msg-time">${time}</span>`;
+        const res = await fetch(`${API_URL}/auto-login`, {
+          headers: { 'ngrok-skip-browser-warning': 'true' }
+        });
+        const data = await res.json();
+        if (data.status === 'ok') {
+          setUserProfile(data.user);
+        }
+      } catch (err) {
+        console.log("Авто-вход не прошёл:", err);
+      }
     }
 
-    container.appendChild(msg);
-    container.scrollTop = container.scrollHeight;
-  }
+    async function requestCode() {
+      const nickname = document.getElementById('nickInput').value.trim();
+      const phone = document.getElementById('phoneInput').value.trim();
 
-  async function startCall(video) {
-    if (!conn) return alert('Сначала подключитесь к собеседнику!');
-    const stream = await navigator.mediaDevices.getUserMedia({ video, audio: true });
-    document.getElementById('localVideo').srcObject = stream;
-    document.getElementById('callOverlay').classList.remove('hidden');
+      if (!nickname || !phone) return alert('Заполните все поля!');
 
-    mediaCall = peer.call(conn.peer, stream);
-    mediaCall.on('stream', (remoteStream) => {
-      document.getElementById('remoteVideo').srcObject = remoteStream;
-    });
-  }
+      try {
+        const res = await fetch(`${API_URL}/request-code`, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': 'true'
+          },
+          body: JSON.stringify({ phone, nickname })
+        });
+        const data = await res.json();
 
-  function endCall() {
-    if (mediaCall) mediaCall.close();
-    document.getElementById('callOverlay').classList.add('hidden');
-  }
-</script>
+        if (!res.ok) throw new Error(data.detail);
+
+        currentFormattedPhone = data.phone;
+        document.getElementById('tgBotBtn').href = data.bot_link;
+        document.getElementById('step1').classList.add('hidden');
+        document.getElementById('step2').classList.remove('hidden');
+
+      } catch (err) {
+        alert('Ошибка: ' + err.message);
+      }
+    }
+
+    async function verifyCode() {
+      const nickname = document.getElementById('nickInput').value.trim();
+      const phone = currentFormattedPhone || document.getElementById('phoneInput').value.trim();
+      const code = document.getElementById('c1').value + document.getElementById('c2').value + document.getElementById('c3').value + document.getElementById('c4').value;
+
+      if (code.length < 4) return alert('Введите 4-значный код!');
+
+      try {
+        const res = await fetch(`${API_URL}/verify-code`, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': 'true'
+          },
+          body: JSON.stringify({ phone, nickname, code })
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.detail);
+
+        setUserProfile(data.user);
+
+      } catch (err) {
+        alert('Ошибка: ' + err.message);
+      }
+    }
+
+    function setUserProfile(user) {
+      document.getElementById('authModal').classList.add('hidden');
+      document.getElementById('chatApp').classList.remove('hidden');
+      document.getElementById('userInfo').innerText = `Вы вошли как: ${user.name} (${user.phone})`;
+    }
+
+    window.onload = checkAutoLogin;
+  </script>
 </body>
 </html>
