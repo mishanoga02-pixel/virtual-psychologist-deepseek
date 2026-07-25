@@ -3,438 +3,510 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Сессия с психологом + чай</title>
+    <title>ClanChat — для своих</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* ... весь тот же CSS, что был выше (не меняется) ... */
-        /* Я сокращаю для длины, но в финальном файле он полный */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Roboto, system-ui, sans-serif; background: #2c3e4e; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 15px; background-image: radial-gradient(circle at 20% 30%, #3a4f5e, #1a2a36); }
-        .app { max-width: 700px; width: 100%; background: #e8e0d8; border-radius: 40px 40px 30px 30px; box-shadow: 0 30px 80px rgba(0,0,0,0.6); overflow: hidden; position: relative; }
-        .room { background: #d6cbc0; padding: 20px 20px 10px; position: relative; min-height: 400px; background-image: linear-gradient(180deg, #e8ddd0 0%, #cbb8a8 100%); border-bottom: 6px solid #a08a78; }
-        .room-decor { position: relative; display: flex; justify-content: space-between; align-items: flex-end; min-height: 340px; }
-        .user-chair { width: 120px; text-align: center; }
-        .user-chair .chair-icon { font-size: 4.5rem; color: #5a3e2e; filter: drop-shadow(0 8px 12px rgba(0,0,0,0.2)); display: block; }
-        .user-chair .label { font-size: 0.7rem; color: #4a3a2e; background: rgba(255,255,255,0.5); border-radius: 20px; padding: 2px 12px; display: inline-block; margin-top: 2px; }
-        .psychologist-chair { width: 140px; text-align: center; }
-        .psychologist-chair .chair-icon { font-size: 4rem; color: #4a5a4a; filter: drop-shadow(0 8px 12px rgba(0,0,0,0.2)); display: block; }
-        .psychologist-chair .avatar { width: 60px; height: 60px; background: #3d8a7a; border-radius: 50%; margin: 0 auto 4px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #fff; border: 3px solid #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .psychologist-chair .label { font-size: 0.7rem; color: #3a4a3a; background: rgba(255,255,255,0.5); border-radius: 20px; padding: 2px 12px; display: inline-block; }
-        .table { width: 100px; text-align: center; padding-bottom: 10px; }
-        .table .table-icon { font-size: 3.8rem; color: #7a6a5a; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.15)); display: block; }
-        .table .tea-cup { font-size: 2.2rem; display: block; margin-top: -16px; animation: steam 2.5s infinite alternate ease-in-out; }
-        @keyframes steam { 0% { transform: translateY(0px) scale(1); opacity: 0.7; } 100% { transform: translateY(-10px) scale(1.04); opacity: 1; } }
-        .speech-bubble { position: absolute; background: #fff; padding: 14px 18px; border-radius: 20px 20px 20px 6px; max-width: 200px; font-size: 0.92rem; line-height: 1.4; color: #1a2a2a; box-shadow: 0 6px 20px rgba(0,0,0,0.08); border: 1px solid #e0d6cc; animation: fadeIn 0.5s ease; transition: all 0.3s; }
-        .speech-bubble.bot-bubble { right: 20px; bottom: 80px; border-radius: 20px 20px 6px 20px; background: #f7f2ec; border-color: #c0b0a0; }
-        .speech-bubble.user-bubble { left: 20px; bottom: 80px; background: #dce8e8; border-color: #a0b8b8; }
-        .speech-bubble .small { font-size: 0.65rem; opacity: 0.5; display: block; margin-top: 4px; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        .control-panel { background: #f2ede8; padding: 14px 18px 18px; display: flex; flex-direction: column; gap: 10px; }
-        .control-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-        .control-row input { flex: 1; border: 1px solid #c0b0a0; border-radius: 40px; padding: 10px 18px; font-size: 0.92rem; background: #fff; outline: none; min-width: 120px; }
-        .control-row input:focus { border-color: #3d8a7a; }
-        .control-row button { background: #3d8a7a; color: #fff; border: none; border-radius: 40px; padding: 10px 20px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; font-size: 0.9rem; white-space: nowrap; }
-        .control-row button:hover { background: #2d6a5a; transform: scale(1.02); }
-        .control-row button:active { transform: scale(0.97); }
-        .control-row button.secondary { background: #8a7a6a; }
-        .control-row button.secondary:hover { background: #6a5a4a; }
-        .control-row button.tea-btn { background: #b8860b; }
-        .control-row button.tea-btn:hover { background: #9a7008; }
-        .control-row button.danger { background: #b33; }
-        .control-row button.danger:hover { background: #922; }
-        .tea-game-overlay { display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(30,30,30,0.7); backdrop-filter: blur(4px); border-radius: 40px 40px 30px 30px; z-index: 100; justify-content: center; align-items: center; padding: 30px; }
-        .tea-game-overlay.active { display: flex; }
-        .tea-game-card { background: #f5ede6; border-radius: 30px; padding: 30px 25px; max-width: 380px; width: 100%; box-shadow: 0 30px 60px rgba(0,0,0,0.5); text-align: center; animation: fadeIn 0.4s ease; }
-        .tea-game-card h3 { font-size: 1.4rem; color: #2a3a3a; margin-bottom: 6px; }
-        .tea-game-card .sub { color: #5a6a6a; font-size: 0.85rem; margin-bottom: 16px; }
-        .tea-game-card .options { display: flex; flex-direction: column; gap: 8px; text-align: left; margin-bottom: 16px; }
-        .tea-game-card .options label { display: flex; align-items: center; gap: 12px; background: #fff; padding: 10px 16px; border-radius: 16px; border: 2px solid #d0c0b0; cursor: pointer; transition: 0.2s; font-size: 0.92rem; }
-        .tea-game-card .options label:hover { border-color: #3d8a7a; background: #f0f8f5; }
-        .tea-game-card .options input[type="radio"] { accent-color: #3d8a7a; width: 18px; height: 18px; }
-        .tea-game-card .tea-result { background: #dce8e0; border-radius: 20px; padding: 12px; margin: 12px 0; font-size: 0.95rem; display: none; animation: fadeIn 0.4s ease; }
-        .tea-game-card .tea-result.show { display: block; }
-        .tea-game-card .tea-result .big-icon { font-size: 3rem; display: block; margin-bottom: 6px; }
-        .tea-game-card .game-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-        .tea-game-card .game-buttons button { padding: 10px 24px; border: none; border-radius: 40px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
-        .tea-game-card .game-buttons .btn-primary { background: #3d8a7a; color: #fff; }
-        .tea-game-card .game-buttons .btn-primary:hover { background: #2d6a5a; }
-        .tea-game-card .game-buttons .btn-secondary { background: #c0b0a0; color: #1a2a2a; }
-        .tea-game-card .game-buttons .btn-secondary:hover { background: #a09080; }
-        .status-bar { background: #e0d6cc; padding: 4px 18px; font-size: 0.7rem; color: #4a4a3a; display: flex; justify-content: space-between; border-top: 1px solid #c8b8a8; }
-        .status-bar .mood { display: flex; align-items: center; gap: 6px; }
-        .status-bar .mood i { color: #3d8a7a; }
-        .api-key-popup { background: #fff3e0; border: 2px solid #b8860b; border-radius: 20px; padding: 16px 20px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-        .api-key-popup input { flex: 1; border: 1px solid #c0b0a0; border-radius: 40px; padding: 8px 16px; font-size: 0.85rem; min-width: 150px; }
-        .api-key-popup .hint { font-size: 0.7rem; color: #6a5a4a; width: 100%; }
-        @media (max-width: 550px) { .room { min-height: 300px; padding: 12px; } .user-chair { width: 80px; } .user-chair .chair-icon { font-size: 3.2rem; } .psychologist-chair { width: 100px; } .psychologist-chair .avatar { width: 44px; height: 44px; font-size: 1.4rem; } .table { width: 60px; } .table .table-icon { font-size: 2.6rem; } .table .tea-cup { font-size: 1.6rem; margin-top: -10px; } .speech-bubble { max-width: 130px; font-size: 0.78rem; padding: 10px 12px; } .speech-bubble.bot-bubble { right: 6px; bottom: 60px; } .speech-bubble.user-bubble { left: 6px; bottom: 60px; } .control-row { flex-wrap: wrap; } .control-row input { min-width: 100%; } .control-row button { flex: 1; justify-content: center; font-size: 0.8rem; padding: 8px 12px; } .tea-game-card { padding: 20px; } }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: #0a0e14; color: #e0e0e0; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 10px; }
+        .app { max-width: 420px; width: 100%; background: #141a24; border-radius: 28px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.7); height: 92vh; display: flex; flex-direction: column; }
+        /* AUTH */
+        .auth-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 30px; gap: 14px; background: linear-gradient(145deg, #0e141e, #1a2230); }
+        .auth-screen .logo { font-size: 3.5rem; color: #6faaff; }
+        .auth-screen h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: 2px; color: #6faaff; }
+        .auth-screen .sub { color: #8ab0d0; font-size: 0.9rem; margin-top: -10px; }
+        .auth-screen input { width: 100%; padding: 14px 20px; border-radius: 40px; border: 1px solid #2a3a4a; background: #1e2836; color: #fff; font-size: 1rem; outline: none; }
+        .auth-screen input:focus { border-color: #6faaff; }
+        .auth-screen button { width: 100%; padding: 14px; border-radius: 40px; border: none; background: #6faaff; color: #0a0e14; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; }
+        .auth-screen button:hover { transform: scale(1.02); background: #8abaff; }
+        .auth-screen .toggle-auth { color: #8abaff; cursor: pointer; font-size: 0.9rem; }
+        .auth-screen .toggle-auth:hover { text-decoration: underline; }
+        .auth-screen .clan-tag { font-size: 0.8rem; color: #5a7a8a; margin-top: 10px; }
+
+        /* CHAT */
+        .chat-screen { display: none; flex-direction: column; height: 100%; }
+        .chat-header { padding: 14px 18px; background: #1a2230; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2a3a4a; }
+        .chat-header .user { display: flex; align-items: center; gap: 10px; }
+        .chat-header .user .avatar { width: 40px; height: 40px; border-radius: 50%; background: #3d8a7a; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: 1.1rem; }
+        .chat-header .user .info { display: flex; flex-direction: column; }
+        .chat-header .user .info .name { font-weight: 600; font-size: 1rem; }
+        .chat-header .user .info .status { font-size: 0.65rem; opacity: 0.6; }
+        .chat-header .actions { display: flex; gap: 14px; }
+        .chat-header .actions i { font-size: 1.2rem; cursor: pointer; color: #8ab0d0; transition: 0.2s; }
+        .chat-header .actions i:hover { color: #6faaff; }
+
+        .messages { flex: 1; padding: 14px 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; background: #0e141e; }
+        .msg { max-width: 82%; padding: 9px 14px; border-radius: 18px; font-size: 0.9rem; word-break: break-word; animation: fadeIn 0.25s; }
+        .msg.self { align-self: flex-end; background: #6faaff; color: #0a0e14; border-bottom-right-radius: 4px; }
+        .msg.other { align-self: flex-start; background: #1e2836; border-bottom-left-radius: 4px; }
+        .msg .time { font-size: 0.55rem; opacity: 0.5; display: block; margin-top: 3px; text-align: right; }
+        .msg .file-icon { font-size: 2rem; display: block; }
+        .msg .voice { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .msg .voice audio { height: 30px; max-width: 160px; }
+        .msg .video-preview { max-width: 160px; border-radius: 12px; margin-top: 4px; }
+        .msg .call-info { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
+        .msg .call-info i { font-size: 1.2rem; }
+        .msg.system { text-align: center; align-self: center; background: transparent; font-size: 0.7rem; opacity: 0.4; max-width: 90%; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+        .input-area { display: flex; gap: 6px; padding: 8px 12px 12px; background: #141a24; border-top: 1px solid #2a3a4a; align-items: center; flex-wrap: wrap; }
+        .input-area input { flex: 1; padding: 10px 16px; border-radius: 40px; border: 1px solid #2a3a4a; background: #1e2836; color: #fff; outline: none; font-size: 0.9rem; min-width: 80px; }
+        .input-area input:focus { border-color: #6faaff; }
+        .input-area .btn-icon { background: transparent; border: none; color: #8ab0d0; font-size: 1.3rem; cursor: pointer; padding: 6px; transition: 0.2s; border-radius: 50%; }
+        .input-area .btn-icon:hover { color: #6faaff; background: #1a2230; }
+        .input-area .btn-send { background: #6faaff; border: none; border-radius: 40px; padding: 10px 18px; color: #0a0e14; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .input-area .btn-send:hover { transform: scale(1.02); background: #8abaff; }
+        .recording-indicator { display: none; color: #ff6b6b; font-size: 0.75rem; align-items: center; gap: 6px; padding: 4px 12px; background: #2a1a1a; border-radius: 40px; }
+        .recording-indicator .dot { width: 10px; height: 10px; background: #ff3b3b; border-radius: 50%; animation: pulse 0.6s infinite alternate; }
+        @keyframes pulse { from { opacity: 0.3; transform: scale(0.8); } to { opacity: 1; transform: scale(1.2); } }
+
+        /* CALL MODAL */
+        .call-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 999; justify-content: center; align-items: center; flex-direction: column; gap: 16px; }
+        .call-modal.active { display: flex; }
+        .call-modal .caller-name { font-size: 1.4rem; font-weight: 600; color: #fff; }
+        .call-modal video { width: 85%; max-width: 400px; border-radius: 20px; background: #0a0e14; transform: scaleX(-1); }
+        .call-modal .call-actions { display: flex; gap: 30px; margin-top: 10px; }
+        .call-modal .call-actions button { width: 60px; height: 60px; border-radius: 50%; border: none; font-size: 1.6rem; cursor: pointer; transition: 0.2s; }
+        .call-modal .call-actions .hangup { background: #ff3b3b; color: #fff; }
+        .call-modal .call-actions .hangup:hover { transform: scale(1.1); }
+        .call-modal .call-actions .mute { background: #2a3a4a; color: #fff; }
+        .call-modal .call-actions .mute:hover { transform: scale(1.1); }
+        .call-modal .call-actions .mute.muted { background: #ff3b3b; }
+
+        @media (max-width: 480px) { .app { height: 96vh; border-radius: 16px; } .call-modal video { width: 90%; } }
     </style>
 </head>
 <body>
+
 <div class="app" id="app">
-    <div class="room">
-        <div class="room-decor">
-            <div class="user-chair">
-                <span class="chair-icon"><i class="fas fa-couch"></i></span>
-                <div class="label">Вы</div>
-            </div>
-            <div class="table">
-                <span class="table-icon"><i class="fas fa-table"></i></span>
-                <span class="tea-cup" id="teaCupIcon">☕</span>
-            </div>
-            <div class="psychologist-chair">
-                <div class="avatar"><i class="fas fa-brain"></i></div>
-                <div class="label">Анна</div>
-            </div>
-        </div>
-        <div class="speech-bubble bot-bubble" id="botBubble">
-            <span id="botMessage">Присядьте. Расскажите, что вас привело.</span>
-            <span class="small">Анна, 5 сек назад</span>
-        </div>
-        <div class="speech-bubble user-bubble" id="userBubble" style="display:none;">
-            <span id="userMessage">...</span>
-            <span class="small">Вы</span>
-        </div>
+    <!-- AUTH -->
+    <div class="auth-screen" id="authScreen">
+        <div class="logo"><i class="fas fa-shield-halved"></i></div>
+        <h1>ClanChat</h1>
+        <div class="sub">для своих</div>
+        <input type="text" id="loginInput" placeholder="Твой ник (логин)" value="Аргум">
+        <input type="password" id="passInput" placeholder="Пароль" value="123">
+        <button id="authBtn">Войти в клан</button>
+        <span class="toggle-auth" id="toggleAuth">Нет аккаунта? Создать</span>
+        <div class="clan-tag">⚔️ только свои</div>
     </div>
 
-    <div class="status-bar">
-        <span class="mood"><i class="fas fa-heart" style="color:#b8860b;"></i> Состояние: <span id="moodText">спокойное</span></span>
-        <span><i class="far fa-clock"></i> <span id="sessionTime">00:00</span></span>
-    </div>
-
-    <div class="control-panel">
-        <!-- БЕЗОПАСНЫЙ ВВОД КЛЮЧА -->
-        <div class="api-key-popup" id="apiKeyPopup">
-            <span style="font-weight:600; font-size:0.9rem;">🔑 DeepSeek ключ:</span>
-            <input type="password" id="apiKeyInput" placeholder="Вставьте ваш API-ключ (sk-...)" autocomplete="off">
-            <button class="secondary" id="apiKeySaveBtn" style="padding:6px 16px; font-size:0.8rem;">Сохранить</button>
-            <span class="hint">🔒 Ключ хранится только в вашем браузере и никуда не отправляется. Без него работает локальный режим.</span>
-        </div>
-
-        <div class="control-row">
-            <input type="text" id="userInput" placeholder="Скажите что-то психологу..." autofocus>
-            <button id="sendBtn"><i class="fas fa-paper-plane"></i> Сказать</button>
-            <button class="secondary" id="quickBtn"><i class="fas fa-bolt"></i> Быстро</button>
-        </div>
-        <div class="control-row" style="justify-content:flex-end;">
-            <button class="tea-btn" id="teaGameBtn"><i class="fas fa-mug-hot"></i> Заварить чай 🍵</button>
-            <button class="secondary" id="resetBtn"><i class="fas fa-redo"></i> Новая сессия</button>
-        </div>
-    </div>
-
-    <div class="tea-game-overlay" id="teaGameOverlay">
-        <div class="tea-game-card">
-            <h3>🍵 Завари чай</h3>
-            <div class="sub">Выбери правильные параметры для идеального чая</div>
-            <div class="options" id="teaOptions">
-                <label><input type="radio" name="tea" value="cup"> Чашка: <strong>керамическая</strong></label>
-                <label><input type="radio" name="tea" value="tea"> Заварка: <strong>чёрный листовой</strong></label>
-                <label><input type="radio" name="tea" value="temp"> Температура: <strong>95°C</strong></label>
-                <label><input type="radio" name="tea" value="time"> Время: <strong>5 минут</strong></label>
+    <!-- CHAT -->
+    <div class="chat-screen" id="chatScreen">
+        <div class="chat-header">
+            <div class="user">
+                <div class="avatar" id="myAvatar">A</div>
+                <div class="info">
+                    <span class="name" id="myUsername">Аргум</span>
+                    <span class="status"><i class="fas fa-circle" style="color:#6fcf97; font-size:0.4rem;"></i> в клане</span>
+                </div>
             </div>
-            <div class="tea-result" id="teaResult">
-                <span class="big-icon" id="resultIcon">☕</span>
-                <span id="resultText">Идеальный чай!</span>
+            <div class="actions">
+                <i class="fas fa-phone" id="voiceCallBtn" title="Голосовой звонок"></i>
+                <i class="fas fa-video" id="videoCallBtn" title="Видеозвонок"></i>
+                <i class="fas fa-user-plus" id="addContactBtn" title="Добавить контакт"></i>
+                <i class="fas fa-sign-out-alt" id="logoutBtn" title="Выйти"></i>
             </div>
-            <div class="game-buttons">
-                <button class="btn-primary" id="teaCheckBtn">✅ Проверить</button>
-                <button class="btn-secondary" id="teaCloseBtn">✖ Закрыть</button>
+        </div>
+        <div class="messages" id="messages">
+            <div class="msg system">Добро пожаловать в ClanChat!</div>
+        </div>
+        <div class="input-area">
+            <button class="btn-icon" id="attachBtn"><i class="fas fa-paperclip"></i></button>
+            <button class="btn-icon" id="voiceMsgBtn"><i class="fas fa-microphone"></i></button>
+            <button class="btn-icon" id="circleBtn"><i class="fas fa-circle"></i></button>
+            <input type="text" id="msgInput" placeholder="Сообщение...">
+            <button class="btn-send" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+            <div class="recording-indicator" id="recordingIndicator">
+                <span class="dot"></span> Запись...
             </div>
         </div>
     </div>
 </div>
 
+<!-- CALL MODAL -->
+<div class="call-modal" id="callModal">
+    <div class="caller-name" id="callerName">Звонок...</div>
+    <video id="remoteVideo" autoplay playsinline></video>
+    <video id="localVideo" autoplay playsinline muted style="width:100px; position:absolute; bottom:100px; right:20px; border-radius:16px; transform:scaleX(-1);"></video>
+    <div class="call-actions">
+        <button class="mute" id="muteBtn"><i class="fas fa-microphone"></i></button>
+        <button class="hangup" id="hangupBtn"><i class="fas fa-phone-slash"></i></button>
+    </div>
+</div>
+
+<script src="https://unpkg.com/peerjs@1.5.1/dist/peerjs.min.js"></script>
 <script>
     (function() {
         // === DOM ===
-        const userInput = document.getElementById('userInput');
+        const authScreen = document.getElementById('authScreen');
+        const chatScreen = document.getElementById('chatScreen');
+        const loginInput = document.getElementById('loginInput');
+        const passInput = document.getElementById('passInput');
+        const authBtn = document.getElementById('authBtn');
+        const toggleAuth = document.getElementById('toggleAuth');
+        const msgInput = document.getElementById('msgInput');
         const sendBtn = document.getElementById('sendBtn');
-        const quickBtn = document.getElementById('quickBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const teaGameBtn = document.getElementById('teaGameBtn');
-        const teaGameOverlay = document.getElementById('teaGameOverlay');
-        const teaCheckBtn = document.getElementById('teaCheckBtn');
-        const teaCloseBtn = document.getElementById('teaCloseBtn');
-        const teaResult = document.getElementById('teaResult');
-        const resultIcon = document.getElementById('resultIcon');
-        const resultText = document.getElementById('resultText');
-        const botMessage = document.getElementById('botMessage');
-        const userMessage = document.getElementById('userMessage');
-        const userBubble = document.getElementById('userBubble');
-        const botBubble = document.getElementById('botBubble');
-        const moodText = document.getElementById('moodText');
-        const sessionTime = document.getElementById('sessionTime');
-        const teaCupIcon = document.getElementById('teaCupIcon');
-        const apiKeyInput = document.getElementById('apiKeyInput');
-        const apiKeySaveBtn = document.getElementById('apiKeySaveBtn');
-        const apiKeyPopup = document.getElementById('apiKeyPopup');
+        const messagesDiv = document.getElementById('messages');
+        const myUsername = document.getElementById('myUsername');
+        const myAvatar = document.getElementById('myAvatar');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const voiceCallBtn = document.getElementById('voiceCallBtn');
+        const videoCallBtn = document.getElementById('videoCallBtn');
+        const addContactBtn = document.getElementById('addContactBtn');
+        const voiceMsgBtn = document.getElementById('voiceMsgBtn');
+        const circleBtn = document.getElementById('circleBtn');
+        const attachBtn = document.getElementById('attachBtn');
+        const recordingIndicator = document.getElementById('recordingIndicator');
+        const callModal = document.getElementById('callModal');
+        const localVideo = document.getElementById('localVideo');
+        const remoteVideo = document.getElementById('remoteVideo');
+        const muteBtn = document.getElementById('muteBtn');
+        const hangupBtn = document.getElementById('hangupBtn');
+        const callerName = document.getElementById('callerName');
 
-        // === ХРАНЕНИЕ КЛЮЧА ===
-        let DEEPSEEK_API_KEY = localStorage.getItem('deepseek_key') || '';
+        // === STATE ===
+        let currentUser = null;
+        let isRegister = false;
+        let peer = null;
+        let currentCall = null;
+        let localStream = null;
+        let isMuted = false;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let isRecording = false;
+        let contacts = [];
+        let activeContact = null; // для упрощения — все сообщения в общий чат
 
-        if (DEEPSEEK_API_KEY) {
-            apiKeyPopup.style.display = 'none';
-        } else {
-            apiKeyPopup.style.display = 'flex';
+        // === FAKE DB (localStorage) ===
+        function getUsers() {
+            return JSON.parse(localStorage.getItem('clanchat_users') || '{}');
+        }
+        function saveUsers(users) {
+            localStorage.setItem('clanchat_users', JSON.stringify(users));
+        }
+        function getMessages() {
+            return JSON.parse(localStorage.getItem('clanchat_messages') || '[]');
+        }
+        function saveMessages(msgs) {
+            localStorage.setItem('clanchat_messages', JSON.stringify(msgs));
+        }
+        function getContacts() {
+            return JSON.parse(localStorage.getItem('clanchat_contacts') || '[]');
+        }
+        function saveContacts(c) {
+            localStorage.setItem('clanchat_contacts', JSON.stringify(c));
         }
 
-        apiKeySaveBtn.addEventListener('click', function() {
-            const key = apiKeyInput.value.trim();
-            if (key && key.startsWith('sk-')) {
-                DEEPSEEK_API_KEY = key;
-                localStorage.setItem('deepseek_key', key);
-                apiKeyPopup.style.display = 'none';
-                showBotMessage('🔑 Ключ сохранён. Теперь я могу использовать DeepSeek для ответов. Приятной сессии!');
-            } else {
-                alert('Введите корректный ключ DeepSeek (начинается с sk-). Или оставьте поле пустым для локального режима.');
-            }
-        });
+        // === AUTH ===
+        function authUser() {
+            const login = loginInput.value.trim();
+            const pass = passInput.value.trim();
+            if (!login || !pass) { alert('Введи логин и пароль'); return; }
 
-        // Если пользователь нажал Enter в поле ключа
-        apiKeyInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') apiKeySaveBtn.click();
-        });
-
-        // === ОСТАЛЬНОЙ КОД (тот же, что был, но с чтением ключа из переменной) ===
-        // ВСЕ ФУНКЦИИ — ТЕ ЖЕ, ЧТО В ПРЕДЫДУЩЕЙ ВЕРСИИ, НО КЛЮЧ БЕРЁТСЯ ИЗ DEEPSEEK_API_KEY
-
-        // === СОСТОЯНИЕ ===
-        let sessionSeconds = 0;
-        let sessionInterval = null;
-        let mood = 'спокойное';
-        let isProcessing = false;
-        let chatHistory = [];
-
-        const DEEPSEEK_URL = 'https://api.deepseek.com/v1/chat/completions';
-        const SYSTEM_PROMPT =
-            'Ты — профессиональный психолог Анна. Ты сидишь в кресле напротив клиента. Отвечай короткими, тёплыми фразами (2-4 предложения). Задавай вопросы. Будь эмпатичной. Не используй шаблоны. Твоя речь — как в реальной беседе. Отвечай на русском.';
-
-        // === ТАЙМЕР СЕССИИ ===
-        function startSessionTimer() {
-            if (sessionInterval) return;
-            sessionInterval = setInterval(() => {
-                sessionSeconds++;
-                const mins = String(Math.floor(sessionSeconds / 60)).padStart(2, '0');
-                const secs = String(sessionSeconds % 60).padStart(2, '0');
-                sessionTime.textContent = `${mins}:${secs}`;
-            }, 1000);
-        }
-
-        // === ОТОБРАЖЕНИЕ ===
-        function showBotMessage(text) {
-            botMessage.textContent = text;
-            botBubble.style.display = 'block';
-            userBubble.style.display = 'none';
-            botBubble.style.animation = 'none';
-            setTimeout(() => { botBubble.style.animation = 'fadeIn 0.5s ease'; }, 10);
-        }
-
-        function showUserMessage(text) {
-            userMessage.textContent = text;
-            userBubble.style.display = 'block';
-            botBubble.style.display = 'none';
-            userBubble.style.animation = 'none';
-            setTimeout(() => { userBubble.style.animation = 'fadeIn 0.5s ease'; }, 10);
-        }
-
-        function setMood(newMood) {
-            mood = newMood;
-            const moods = {
-                'спокойное': '😌 спокойное',
-                'тревожное': '😰 тревожное',
-                'грустное': '😔 грустное',
-                'радостное': '😊 радостное',
-                'задумчивое': '🤔 задумчивое'
-            };
-            moodText.textContent = moods[newMood] || newMood;
-        }
-
-        // === DEEPSEEK (с проверкой ключа) ===
-        async function getDeepSeekReply(userText) {
-            if (!DEEPSEEK_API_KEY) {
-                return getLocalReply(userText);
-            }
-            try {
-                const messages = [
-                    { role: 'system', content: SYSTEM_PROMPT },
-                    ...chatHistory.slice(-8),
-                    { role: 'user', content: userText }
-                ];
-                const response = await fetch(DEEPSEEK_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        model: 'deepseek-chat',
-                        messages: messages,
-                        temperature: 0.75,
-                        max_tokens: 300,
-                        top_p: 0.9
-                    })
-                });
-                if (!response.ok) {
-                    console.error('❌ Ошибка DeepSeek:', response.status);
-                    return getLocalReply(userText);
-                }
-                const data = await response.json();
-                if (data.choices && data.choices.length > 0) {
-                    return data.choices[0].message.content.trim();
-                }
-                return getLocalReply(userText);
-            } catch (e) {
-                console.error('❌ Ошибка запроса:', e);
-                return getLocalReply(userText);
-            }
-        }
-
-        // === ЛОКАЛЬНЫЙ FALLBACK ===
-        function getLocalReply(text) {
-            const lower = text.toLowerCase();
-            if (lower.includes('привет') || lower.includes('здравствуй')) {
-                return 'Здравствуйте. Присаживайтесь поудобнее. Расскажите, что вас тревожит сегодня.';
-            }
-            if (lower.includes('тревог') || lower.includes('боюс') || lower.includes('страх')) {
-                setMood('тревожное');
-                return 'Я слышу вашу тревогу. Давайте попробуем глубоко подышать. Вдохните на 4 счёта, задержите на 4, выдохните на 6. Что вы сейчас чувствуете?';
-            }
-            if (lower.includes('спать') || lower.includes('сон') || lower.includes('бессонниц')) {
-                return 'Бессонница часто связана с перегрузкой. Попробуйте за час до сна убрать телефон и принять тёплую ванну. А сейчас просто скажите себе: "Я позволяю себе отдыхать".';
-            }
-            if (lower.includes('успокоить') || lower.includes('расслабиться')) {
-                setMood('спокойное');
-                return 'Хорошо. Давайте сделаем упражнение "Заземление": назовите 5 вещей, которые вы видите, 4 — которые можете потрогать, 3 — слышите, 2 — чувствуете запах, 1 — вкус. Что получилось?';
-            }
-            if (lower.includes('спасибо')) {
-                return 'Пожалуйста. Вы молодец, что заботитесь о себе. Есть ещё что-то, что хотите обсудить?';
-            }
-            if (lower.includes('о себе') || lower.includes('кто ты')) {
-                return 'Я Анна, ваш психолог. Я здесь, чтобы помочь вам услышать себя. Расскажите, что вас привело сегодня.';
-            }
-            return 'Я вас внимательно слушаю. Расскажите подробнее, что у вас на душе. Иногда просто выговориться — уже большое облегчение.';
-        }
-
-        // === ОТПРАВКА ===
-        async function handleSend() {
-            const text = userInput.value.trim();
-            if (!text || isProcessing) return;
-            isProcessing = true;
-            sendBtn.disabled = true;
-            userInput.value = '';
-
-            showUserMessage(text);
-            chatHistory.push({ role: 'user', content: text });
-
-            const lower = text.toLowerCase();
-            if (lower.includes('тревог') || lower.includes('боюс') || lower.includes('страх')) setMood('тревожное');
-            else if (lower.includes('груст') || lower.includes('печал') || lower.includes('плак')) setMood('грустное');
-            else if (lower.includes('рад') || lower.includes('хорош') || lower.includes('отличн')) setMood('радостное');
-            else if (lower.includes('дума') || lower.includes('не знаю') || lower.includes('может')) setMood('задумчивое');
-            else setMood('спокойное');
-
-            try {
-                const reply = await getDeepSeekReply(text);
-                chatHistory.push({ role: 'assistant', content: reply });
-                if (chatHistory.length > 30) chatHistory = chatHistory.slice(-30);
-                setTimeout(() => {
-                    showBotMessage(reply);
-                    isProcessing = false;
-                    sendBtn.disabled = false;
-                    userInput.focus();
-                }, 700);
-            } catch (e) {
-                showBotMessage('Извините, я на мгновение задумалась. Повторите, пожалуйста.');
-                isProcessing = false;
-                sendBtn.disabled = false;
-                userInput.focus();
-            }
-        }
-
-        // === БЫСТРЫЕ ФРАЗЫ ===
-        const quickPhrases = [
-            'Я чувствую тревогу', 'Мне грустно', 'Я не могу уснуть',
-            'Расскажите о себе', 'Как успокоиться?', 'Спасибо, мне стало легче'
-        ];
-        let quickIndex = 0;
-        quickBtn.addEventListener('click', function() {
-            userInput.value = quickPhrases[quickIndex % quickPhrases.length];
-            quickIndex++;
-            handleSend();
-        });
-
-        // === НОВАЯ СЕССИЯ ===
-        resetBtn.addEventListener('click', function() {
-            chatHistory = [];
-            sessionSeconds = 0;
-            sessionTime.textContent = '00:00';
-            setMood('спокойное');
-            showBotMessage('Давайте начнём заново. Присядьте. Расскажите, что вас привело.');
-            userInput.value = '';
-            userInput.focus();
-            teaCupIcon.textContent = '☕';
-        });
-
-        // === МИНИ-ИГРА ЧАЙ ===
-        teaGameBtn.addEventListener('click', function() {
-            teaGameOverlay.classList.add('active');
-            teaResult.classList.remove('show');
-            document.querySelectorAll('input[name="tea"]').forEach(el => el.checked = false);
-        });
-        teaCloseBtn.addEventListener('click', function() {
-            teaGameOverlay.classList.remove('active');
-        });
-        teaCheckBtn.addEventListener('click', function() {
-            const selected = document.querySelector('input[name="tea"]:checked');
-            if (!selected) {
-                resultIcon.textContent = '😅';
-                resultText.textContent = 'Выбери один из вариантов!';
-                teaResult.classList.add('show');
+            const users = getUsers();
+            if (isRegister) {
+                if (users[login]) { alert('Такой ник уже занят'); return; }
+                users[login] = { password: pass, name: login };
+                saveUsers(users);
+                alert('Аккаунт создан! Войди.');
+                isRegister = false;
+                toggleAuth.textContent = 'Нет аккаунта? Создать';
+                authBtn.textContent = 'Войти в клан';
                 return;
             }
-            const value = selected.value;
-            const results = {
-                'cup': { icon: '🍵', text: 'Отличный выбор! Керамика сохраняет тепло и аромат.' },
-                'tea': { icon: '🫖', text: 'Чёрный листовой — классика. Заваривается идеально.' },
-                'temp': { icon: '🌡️', text: '95°C — правильная температура для чёрного чая.' },
-                'time': { icon: '⏱️', text: '5 минут — идеальное время заваривания. Молодец!' }
+
+            if (!users[login] || users[login].password !== pass) {
+                alert('Неверный логин или пароль');
+                return;
+            }
+
+            currentUser = login;
+            startChat();
+        }
+
+        function startChat() {
+            authScreen.style.display = 'none';
+            chatScreen.style.display = 'flex';
+            myUsername.textContent = currentUser;
+            myAvatar.textContent = currentUser[0].toUpperCase();
+            contacts = getContacts();
+            loadMessages();
+            initPeer();
+            addSystemMessage('⚔️ Ты в клане. Пиши своим.');
+        }
+
+        function logout() {
+            if (peer) peer.destroy();
+            if (localStream) localStream.getTracks().forEach(t => t.stop());
+            currentUser = null;
+            chatScreen.style.display = 'none';
+            authScreen.style.display = 'flex';
+            messagesDiv.innerHTML = '';
+            document.title = 'ClanChat';
+        }
+
+        // === PEERJS ===
+        function initPeer() {
+            peer = new Peer(currentUser, {
+                config: { 'iceServers': [{ urls: 'stun:stun.l.google.com:19302' }] }
+            });
+
+            peer.on('open', (id) => {
+                console.log('Peer открыт:', id);
+                addSystemMessage('🔗 Подключение установлено. Твой ID: ' + id);
+            });
+
+            peer.on('call', (call) => {
+                const isVideo = call.metadata && call.metadata.type === 'video';
+                navigator.mediaDevices.getUserMedia({ audio: true, video: isVideo })
+                    .then(stream => {
+                        localStream = stream;
+                        localVideo.srcObject = stream;
+                        call.answer(stream);
+                        currentCall = call;
+                        callerName.textContent = call.metadata?.caller || 'Собеседник';
+                        callModal.classList.add('active');
+                        call.on('stream', (remoteStream) => {
+                            remoteVideo.srcObject = remoteStream;
+                        });
+                        call.on('close', () => endCall());
+                        addSystemMessage('📞 Входящий звонок от ' + (call.metadata?.caller || 'неизвестного'));
+                    })
+                    .catch(() => { alert('Ошибка доступа к медиа'); });
+            });
+
+            peer.on('error', (err) => {
+                console.error('Peer error:', err);
+                if (err.type === 'peer-unavailable') {
+                    alert('Пользователь не в сети');
+                }
+            });
+        }
+
+        // === MESSAGES ===
+        function addMessage(text, sender, type = 'text', extra = null) {
+            const msgs = getMessages();
+            msgs.push({ text, sender, type, extra, time: Date.now() });
+            saveMessages(msgs);
+            renderMessage({ text, sender, type, extra, time: Date.now() });
+            // уведомление
+            if (sender !== currentUser && Notification.permission === 'granted') {
+                new Notification('ClanChat: ' + sender, { body: text });
+            }
+        }
+
+        function renderMessage(msg) {
+            const div = document.createElement('div');
+            const isSelf = msg.sender === currentUser;
+            div.className = `msg ${isSelf ? 'self' : 'other'}`;
+            let content = msg.text;
+            if (msg.type === 'voice') {
+                content = `<div class="voice"><i class="fas fa-microphone"></i> <audio controls src="${msg.extra}"></audio></div>`;
+            } else if (msg.type === 'circle') {
+                content = `<video class="video-preview" src="${msg.extra}" controls autoplay muted loop></video>`;
+            } else if (msg.type === 'file') {
+                content = `<a href="${msg.extra}" target="_blank" style="color:${isSelf ? '#0a0e14' : '#6faaff'};"><i class="fas fa-file"></i> Файл</a>`;
+            } else if (msg.type === 'call') {
+                content = `<div class="call-info"><i class="fas fa-phone"></i> ${msg.text}</div>`;
+            }
+            const time = new Date(msg.time).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+            div.innerHTML = `${content}<span class="time">${time}</span>`;
+            messagesDiv.appendChild(div);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function loadMessages() {
+            messagesDiv.innerHTML = '';
+            const msgs = getMessages();
+            msgs.forEach(m => renderMessage(m));
+        }
+
+        function addSystemMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'msg system';
+            div.textContent = text;
+            messagesDiv.appendChild(div);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // === SEND TEXT ===
+        function sendText() {
+            const text = msgInput.value.trim();
+            if (!text) return;
+            addMessage(text, currentUser);
+            msgInput.value = '';
+            // Отправляем всем контактам (имитация, реально — через PeerJS)
+            contacts.forEach(contact => {
+                // В реальном проекте — отправка через WebSocket/Peer
+            });
+        }
+
+        // === VOICE RECORDING ===
+        function startVoiceRecording() {
+            if (isRecording) return;
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    isRecording = true;
+                    recordingIndicator.style.display = 'flex';
+                    audioChunks = [];
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                    mediaRecorder.onstop = () => {
+                        const blob = new Blob(audioChunks, { type: 'audio/ogg' });
+                        const url = URL.createObjectURL(blob);
+                        addMessage('🎤 Голосовое', currentUser, 'voice', url);
+                        stream.getTracks().forEach(t => t.stop());
+                        recordingIndicator.style.display = 'none';
+                        isRecording = false;
+                    };
+                    mediaRecorder.start();
+                    setTimeout(() => {
+                        if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+                    }, 10000);
+                })
+                .catch(() => alert('Нет доступа к микрофону'));
+        }
+
+        // === CIRCLE ===
+        function startCircleRecording() {
+            if (isRecording) return;
+            navigator.mediaDevices.getUserMedia({ audio: true, video: { facingMode: 'user', width: { ideal: 240 }, height: { ideal: 240 } } })
+                .then(stream => {
+                    isRecording = true;
+                    recordingIndicator.style.display = 'flex';
+                    recordingIndicator.innerHTML = '<span class="dot"></span> Кружочек...';
+                    const chunks = [];
+                    const rec = new MediaRecorder(stream, { mimeType: 'video/webm' });
+                    rec.ondataavailable = e => chunks.push(e.data);
+                    rec.onstop = () => {
+                        const blob = new Blob(chunks, { type: 'video/webm' });
+                        const url = URL.createObjectURL(blob);
+                        addMessage('📹 Кружочек', currentUser, 'circle', url);
+                        stream.getTracks().forEach(t => t.stop());
+                        recordingIndicator.style.display = 'none';
+                        recordingIndicator.innerHTML = '<span class="dot"></span> Запись...';
+                        isRecording = false;
+                    };
+                    rec.start();
+                    setTimeout(() => {
+                        if (rec && rec.state === 'recording') rec.stop();
+                    }, 7000);
+                })
+                .catch(() => alert('Нет доступа к камере'));
+        }
+
+        // === CALLS ===
+        function startCall(isVideo) {
+            if (!peer) { alert('Подожди подключения...'); return; }
+            const target = prompt('Введите ник собеседника:');
+            if (!target) return;
+            if (target === currentUser) { alert('Нельзя позвонить самому себе'); return; }
+            navigator.mediaDevices.getUserMedia({ audio: true, video: isVideo })
+                .then(stream => {
+                    localStream = stream;
+                    localVideo.srcObject = stream;
+                    const call = peer.call(target, stream, { metadata: { type: isVideo ? 'video' : 'audio', caller: currentUser } });
+                    if (!call) { alert('Пользователь не найден'); return; }
+                    currentCall = call;
+                    callerName.textContent = target;
+                    callModal.classList.add('active');
+                    call.on('stream', (remoteStream) => {
+                        remoteVideo.srcObject = remoteStream;
+                    });
+                    call.on('close', () => endCall());
+                    addMessage('📞 Звонок ' + target + (isVideo ? ' (видео)' : ''), currentUser, 'call');
+                })
+                .catch(() => alert('Ошибка доступа к медиа'));
+        }
+
+        function endCall() {
+            if (localStream) localStream.getTracks().forEach(t => t.stop());
+            if (currentCall) currentCall.close();
+            currentCall = null;
+            localStream = null;
+            callModal.classList.remove('active');
+            remoteVideo.srcObject = null;
+            localVideo.srcObject = null;
+            isMuted = false;
+            muteBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+            muteBtn.classList.remove('muted');
+        }
+
+        // === CONTACTS ===
+        function addContact() {
+            const name = prompt('Введите ник для добавления в контакты:');
+            if (!name) return;
+            const users = getUsers();
+            if (!users[name]) { alert('Пользователь не найден в клане'); return; }
+            if (contacts.includes(name)) { alert('Уже в контактах'); return; }
+            contacts.push(name);
+            saveContacts(contacts);
+            addSystemMessage('➕ ' + name + ' добавлен в контакты');
+        }
+
+        // === EVENTS ===
+        authBtn.addEventListener('click', authUser);
+        toggleAuth.addEventListener('click', () => {
+            isRegister = !isRegister;
+            authBtn.textContent = isRegister ? 'Создать аккаунт' : 'Войти в клан';
+            toggleAuth.textContent = isRegister ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Создать';
+        });
+        sendBtn.addEventListener('click', sendText);
+        msgInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendText(); });
+        logoutBtn.addEventListener('click', logout);
+        addContactBtn.addEventListener('click', addContact);
+
+        voiceCallBtn.addEventListener('click', () => startCall(false));
+        videoCallBtn.addEventListener('click', () => startCall(true));
+        hangupBtn.addEventListener('click', endCall);
+
+        muteBtn.addEventListener('click', () => {
+            if (localStream) {
+                isMuted = !isMuted;
+                localStream.getAudioTracks().forEach(t => t.enabled = !isMuted);
+                muteBtn.innerHTML = isMuted ? '<i class="fas fa-microphone-slash"></i>' : '<i class="fas fa-microphone"></i>';
+                muteBtn.classList.toggle('muted');
+            }
+        });
+
+        voiceMsgBtn.addEventListener('click', startVoiceRecording);
+        circleBtn.addEventListener('click', startCircleRecording);
+
+        attachBtn.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        const dataUrl = ev.target.result;
+                        addMessage('📎 ' + file.name, currentUser, 'file', dataUrl);
+                    };
+                    reader.readAsDataURL(file);
+                }
             };
-            const res = results[value];
-            resultIcon.textContent = res.icon;
-            resultText.textContent = res.text;
-            teaResult.classList.add('show');
-            teaCupIcon.textContent = '🫖';
-            teaCupIcon.style.animation = 'steam 2s infinite alternate';
-            setTimeout(() => {
-                showBotMessage('Вы заварили отличный чай! Это помогает успокоиться. Как вы себя чувствуете?');
-            }, 1000);
-            setTimeout(() => {
-                teaGameOverlay.classList.remove('active');
-            }, 3000);
-        });
-        teaGameOverlay.addEventListener('click', function(e) {
-            if (e.target === teaGameOverlay) teaGameOverlay.classList.remove('active');
+            input.click();
         });
 
-        // === СОБЫТИЯ ===
-        sendBtn.addEventListener('click', handleSend);
-        userInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') handleSend();
-        });
+        // === INIT ===
+        window.addEventListener('DOMContentLoaded', () => {
+            const users = getUsers();
+            if (!users['Аргум']) {
+                users['Аргум'] = { password: '123', name: 'Аргум' };
+                saveUsers(users);
+            }
+            loginInput.value = 'Аргум';
+            passInput.value = '123';
 
-        // === ЗАПУСК ===
-        window.addEventListener('DOMContentLoaded', function() {
-            showBotMessage('Здравствуйте. Присядьте, пожалуйста. Я Анна, ваш психолог. Расскажите, что вас привело сегодня. Я здесь, чтобы вас выслушать. 🧡');
-            startSessionTimer();
-            if ('Notification' in window && Notification.permission === 'default') {
+            if (Notification.permission === 'default') {
                 Notification.requestPermission();
             }
-            setTimeout(() => userInput.focus(), 500);
-            setTimeout(() => {
-                if (!DEEPSEEK_API_KEY) {
-                    showBotMessage('👆 Вставьте ваш DeepSeek API-ключ в поле сверху, чтобы я могла отвечать через ИИ. Или оставьте — я буду отвечать в локальном режиме.');
-                }
-            }, 3000);
         });
+
+        // === ВСТРОЕННЫЙ ПОМОЩНИК ДЛЯ ЗВОНКОВ ===
+        console.log('⚔️ ClanChat запущен. Твой ID: ' + (peer ? peer.id : 'ожидание...'));
+        console.log('Для звонка введите ник собеседника (он должен быть онлайн).');
     })();
 </script>
 </body>
